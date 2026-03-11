@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AyoScore.com</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0d;--bg2:#141414;--card:#1a1a1a;--card2:#222;--accent:#e63946;--green:#2ecc71;--red:#e63946;--yellow:#f59e0b;--text:#f0f0f0;--muted:#888;--border:#2a2a2a}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes rowIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
+nav{position:sticky;top:0;z-index:100;background:rgba(13,13,13,.96);backdrop-filter:blur(20px);border-bottom:1px solid rgba(230,57,70,.18);padding:0 16px}
+.nav-inner{max-width:1320px;margin:auto;display:flex;align-items:center;height:60px;gap:4px;flex-wrap:wrap}
+.logo{font-size:20px;font-weight:900;cursor:pointer;margin-right:10px}
+.logo .ayo{color:#ef4444}.logo .score{color:#fff}
+.nav-tab{padding:6px 12px;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);border:none;background:none;white-space:nowrap;transition:.2s}
+.nav-tab:hover,.nav-tab.active{color:var(--accent);background:rgba(230,57,70,.1)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.admin-badge{padding:4px 10px;border-radius:7px;background:rgba(230,57,70,.15);color:var(--accent);font-size:11px;font-weight:700;border:1px solid rgba(230,57,70,.3)}
+.btn-login{padding:6px 14px;background:linear-gradient(135deg,var(--accent),#c1121f);color:#fff;font-weight:700;font-size:12px;cursor:pointer;border:none;border-radius:7px}
+.btn-logout{padding:6px 14px;background:#222;color:#ef4444;font-weight:700;font-size:12px;cursor:pointer;border:1px solid rgba(239,68,68,.3);border-radius:7px}
+.page{display:none;max-width:1320px;margin:0 auto;padding:18px;flex:1}
+.page.active{display:block;animation:fadeInUp .35s ease}
+.hero{background:linear-gradient(135deg,#0f1629,#1a0f20 50%,#0f2030);border-radius:18px;padding:40px;margin-bottom:20px;position:relative;overflow:hidden;border:1px solid var(--border)}
+.hero h1{font-size:36px;font-weight:900;line-height:1.1;margin-bottom:10px}
+.hero h1 span{background:linear-gradient(135deg,#e63946,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--muted);font-size:14px;max-width:460px;line-height:1.7;margin-bottom:20px}
+.hero-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-primary{padding:9px 22px;background:linear-gradient(135deg,var(--accent),#c1121f);color:#fff;border:none;border-radius:9px;font-weight:700;cursor:pointer;font-size:13px}
+.btn-outline{padding:9px 22px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:9px;font-weight:600;cursor:pointer;font-size:13px}
+.hero-stats{display:flex;gap:22px;margin-top:28px;flex-wrap:wrap}
+.hero-stat h3{font-size:22px;font-weight:900;color:var(--accent)}.hero-stat p{font-size:11px;color:var(--muted)}
+.main-grid{display:grid;grid-template-columns:1fr 300px;gap:18px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px}
+.section-title::before{content:'';width:3px;height:16px;background:linear-gradient(var(--accent),#ff6b6b);border-radius:2px}
+.section-link{font-size:12px;color:var(--accent);cursor:pointer}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+.tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.tab{padding:5px 13px;border-radius:18px;cursor:pointer;font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--card);color:var(--muted);transition:.2s}
+.tab.active{background:linear-gradient(135deg,var(--accent),#c1121f);color:#fff;border-color:transparent}
+.match-card{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;transition:.2s;cursor:pointer}
+.match-card:hover{border-color:rgba(230,57,70,.35);transform:translateY(-1px)}
+.mbadge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;display:inline-block}
+.badge-live{background:rgba(239,68,68,.15);color:#ef4444;animation:blink 1.2s infinite}
+.badge-done{background:rgba(100,116,139,.15);color:var(--muted)}
+.badge-up{background:rgba(230,57,70,.1);color:var(--accent)}
+.fase-pill{font-size:9px;font-weight:700;padding:1px 7px;border-radius:4px;background:rgba(139,92,246,.1);color:#a78bfa}
+.kt-wrap{background:var(--card);border:1px solid rgba(230,57,70,.15);border-radius:18px;overflow:hidden}
+.kt-topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:linear-gradient(135deg,rgba(230,57,70,.1),transparent);border-bottom:1px solid rgba(230,57,70,.12)}
+.kt-head{display:grid;grid-template-columns:40px 1fr 36px 36px 36px 36px 38px 38px 44px 60px;padding:8px 16px;font-size:10px;font-weight:800;text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.05);align-items:center}
+.kt-head>span{text-align:center}.kt-head>span:nth-child(2){text-align:left;padding-left:4px}
+.kt-row{display:grid;grid-template-columns:40px 1fr 36px 36px 36px 36px 38px 38px 44px 60px;padding:10px 16px;font-size:12px;align-items:center;border-bottom:1px solid rgba(255,255,255,.04);transition:all .2s;cursor:pointer;position:relative}
+.kt-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:transparent}
+.kt-row:hover{background:rgba(230,57,70,.05);transform:translateX(2px)}.kt-row:hover::before{background:var(--accent)}
+.kt-row.r1b{background:linear-gradient(90deg,rgba(245,158,11,.07),transparent)}.kt-row.r1b::before{background:#f59e0b}
+.kt-row.r2b{background:linear-gradient(90deg,rgba(148,163,184,.05),transparent)}.kt-row.r2b::before{background:#94a3b8}
+.kt-row.r3b{background:linear-gradient(90deg,rgba(205,127,50,.05),transparent)}.kt-row.r3b::before{background:#cd7f32}
+.kt-row.rel{background:linear-gradient(90deg,rgba(230,57,70,.04),transparent)}
+.kt-row>span{text-align:center;color:var(--muted);font-size:11px}.kt-row>span:nth-child(2){text-align:left}
+.rnk{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;flex-shrink:0}
+.rg{background:linear-gradient(135deg,#f59e0b,#d97706);color:#000}.rs{background:linear-gradient(135deg,#cbd5e1,#94a3b8);color:#000}.rb{background:linear-gradient(135deg,#cd7f32,#92400e);color:#fff}.rn{background:rgba(255,255,255,.07);color:var(--muted)}
+.tcell{display:flex;align-items:center;gap:7px;font-weight:700;font-size:12px;color:var(--text)}
+.gdp{color:var(--green);font-weight:700}.gdn{color:var(--red);font-weight:700}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.pc{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:14px;text-align:center;transition:.2s;cursor:pointer}
+.pc:hover{border-color:rgba(230,57,70,.3);transform:translateY(-2px)}
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:13px}
+.tc{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:16px;text-align:center;transition:.2s;cursor:pointer}
+.tc:hover{border-color:rgba(230,57,70,.3);transform:translateY(-2px)}
+.nc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:9px;cursor:pointer;transition:.2s}
+.nc:hover{border-color:rgba(230,57,70,.2)}
+.widget{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:14px}
+.wt{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.srow{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid rgba(42,42,42,.8)}
+.srow:last-child{border:none}
+.gbar{height:3px;background:var(--border);border-radius:2px;margin-top:3px;overflow:hidden}
+.gfill{height:100%;background:linear-gradient(90deg,var(--accent),#ff6b6b);border-radius:2px}
+.sico{display:inline-flex;align-items:center;gap:2px;font-size:10px;padding:1px 5px;border-radius:4px}
+.yk{background:rgba(245,158,11,.15);color:#f59e0b}.km{background:rgba(239,68,68,.15);color:#ef4444}
+.ldot{width:6px;height:6px;border-radius:50%;background:#ef4444;animation:blink 1s infinite;display:inline-block;margin-right:3px}
+/* SISTEM */
+.sbadge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:18px;font-size:10px;font-weight:700;border:1px solid transparent}
+/* LIGA CARD */
+.lcard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;cursor:pointer;transition:all .2s}
+.lcard:hover{border-color:rgba(230,57,70,.3);transform:translateY(-2px)}
+.lcard.sel{border:2px solid var(--accent);background:linear-gradient(135deg,rgba(230,57,70,.08),rgba(193,18,31,.04))}
+.ldetail{background:var(--card);border:1px solid rgba(230,57,70,.2);border-radius:18px;overflow:hidden;margin-top:20px}
+/* ADMIN */
+.ap{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px;margin-bottom:12px}
+.at{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.atabs{display:flex;gap:4px;margin-bottom:18px;flex-wrap:wrap}
+.atab{padding:6px 14px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:600;border:1px solid var(--border);background:var(--card2);color:var(--muted);transition:.2s}
+.atab.active{background:rgba(230,57,70,.15);color:var(--accent);border-color:rgba(230,57,70,.3)}
+.fg{margin-bottom:10px}
+label{display:block;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px}
+input,select,textarea{width:100%;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:12px;outline:none;transition:.2s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+select option{background:var(--bg2)}
+textarea{resize:vertical;min-height:65px}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.badd{padding:7px 16px;background:linear-gradient(135deg,var(--accent),#c1121f);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:11px}
+.bsm{padding:3px 9px;border-radius:5px;cursor:pointer;font-size:10px;font-weight:700;border:none}
+.bdel{background:rgba(239,68,68,.12);color:#ef4444}.bedit{background:rgba(59,130,246,.12);color:#60a5fa}
+.smsg{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:7px;padding:7px 10px;font-size:11px;color:var(--green);margin-top:7px;display:none}
+.li{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg2);border-radius:8px;margin-bottom:5px;font-size:11px}
+.lii{display:flex;align-items:center;gap:7px;flex:1;min-width:0}
+.stov{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stoc{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:12px}
+.ston{font-size:26px;font-weight:900;color:var(--accent)}.stol{font-size:10px;color:var(--muted);margin-top:2px}
+.upl{border:2px dashed var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;background:var(--bg2)}
+.upl:hover{border-color:var(--accent)}
+.uppr{width:70px;height:70px;border-radius:50%;object-fit:cover;margin:0 auto 6px;display:block;border:2px solid var(--accent)}
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
+.mo.show{display:flex}
+.mb{background:linear-gradient(160deg,#131c35,#0f1629);border:1px solid var(--border);border-radius:20px;width:90%;max-width:680px;position:relative;overflow:hidden;margin:auto}
+.mb::before{content:'';position:absolute;top:-1px;left:20%;right:20%;height:2px;background:linear-gradient(90deg,transparent,var(--accent),#ff6b6b,transparent)}
+.mc{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.07);border:none;color:var(--text);width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:15px;z-index:10}
+.dh{padding:24px;display:flex;gap:18px;align-items:flex-start;border-bottom:1px solid var(--border)}
+.dpho{width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);flex-shrink:0}
+.dphp{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;border:3px solid var(--accent);flex-shrink:0}
+.dn{font-size:20px;font-weight:900;margin-bottom:3px}
+.ds{font-size:12px;color:var(--muted);margin-bottom:8px}
+.dtags{display:flex;gap:5px;flex-wrap:wrap}
+.dtag{padding:3px 10px;border-radius:18px;font-size:10px;font-weight:700;background:rgba(230,57,70,.1);color:var(--accent);border:1px solid rgba(230,57,70,.2)}
+.db{padding:18px 24px}
+.sr{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.sb{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:12px;text-align:center}
+.sbv{font-size:24px;font-weight:900;color:var(--accent)}.sbl{font-size:10px;color:var(--muted);margin-top:2px}
+.pir{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(42,42,42,.5);font-size:11px;cursor:pointer}
+.pir:hover{background:rgba(230,57,70,.04);border-radius:7px}.pir:last-child{border:none}
+.mds{background:linear-gradient(135deg,#0f1629,#1a0a1a);border-bottom:1px solid var(--border);padding:28px 24px;text-align:center}
+.msb{font-size:52px;font-weight:900;letter-spacing:4px;display:flex;align-items:center;justify-content:center;gap:16px}
+.mdc{padding:16px 20px;max-height:340px;overflow-y:auto}
+.tli{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(42,42,42,.5);font-size:11px}
+.tli:last-child{border:none}
+.tlm{min-width:32px;font-size:10px;font-weight:800;color:var(--accent);text-align:right}
+.tlic{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.tg2{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3)}.tyw{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3)}.trd{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3)}.tas{background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3)}
+/* LOGIN */
+.lbox{background:linear-gradient(160deg,#131c35,#0f1629);border:1px solid var(--border);border-radius:20px;padding:32px;width:90%;max-width:400px;position:relative;margin:auto}
+.lbox::before{content:'';position:absolute;top:-1px;left:20%;right:20%;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.lic{width:60px;height:60px;border-radius:16px;background:rgba(230,57,70,.12);border:1px solid rgba(230,57,70,.2);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 16px}
+.lbox h2{text-align:center;font-size:18px;font-weight:800;margin-bottom:4px}
+.lsub{text-align:center;color:var(--muted);font-size:12px;margin-bottom:20px}
+.iw{position:relative;margin-bottom:10px}.iw input{padding-left:36px}
+.iico{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.tpw{position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:12px;color:var(--muted);background:none;border:none}
+.bsi{width:100%;padding:10px;background:linear-gradient(135deg,var(--accent),#c1121f);color:#fff;border:none;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;margin-top:4px}
+.bsi:disabled{opacity:.5;cursor:not-allowed}
+.ab{border-radius:8px;padding:8px 10px;font-size:11px;margin-top:8px;display:none;align-items:center;gap:6px}
+.ae{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444}
+.al{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#ef4444}
+.abar{height:2px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.afill{height:100%;background:linear-gradient(90deg,var(--green),var(--red));transition:.4s}
+.lock{text-align:center;padding:60px 20px}
+.evli{display:flex;align-items:center;gap:7px;padding:6px 9px;background:var(--bg2);border-radius:7px;margin-bottom:4px;font-size:11px}
+.cat-jadwal{background:rgba(59,130,246,.15);color:#60a5fa}
+.cat-hasil{background:rgba(16,185,129,.15);color:#10b981}
+.cat-info{background:rgba(148,163,184,.12);color:#94a3b8}
+.cat-transfer{background:rgba(139,92,246,.15);color:#a78bfa}
+/* LINEUP */
+.luw{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:14px}
+.lush{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid rgba(230,57,70,.12)}
+.luic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.lust{font-size:13px;font-weight:800}
+.lubd{padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;margin-left:auto;flex-shrink:0}
+.lucard{display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid rgba(255,255,255,.035);transition:.2s;cursor:pointer;position:relative}
+.lucard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:transparent;transition:.2s}
+.lucard:hover{background:rgba(230,57,70,.04)}.lucard:hover::before{background:var(--accent)}.lucard:last-child{border-bottom:none}
+.lunum{min-width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0;background:rgba(255,255,255,.06);border:1px solid var(--border)}
+.lunm{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lupos{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:12px;font-size:10px;font-weight:700;margin-top:3px}
+.lust2{display:flex;gap:10px;flex-shrink:0;align-items:center}
+.lustat{text-align:center}.lusv{font-size:13px;font-weight:800;color:var(--accent)}.lusl{font-size:9px;color:var(--muted)}
+.lucc{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.035);transition:.2s}
+.lucc:last-child{border-bottom:none}.lucc:hover{background:rgba(230,57,70,.04)}
+.luempty{padding:28px;text-align:center;color:var(--muted);font-size:12px}
+.pp{background:rgba(239,68,68,.12);color:#ef4444}.gp{background:rgba(59,130,246,.12);color:#60a5fa}.dp{background:rgba(16,185,129,.12);color:#10b981}.kp{background:rgba(245,158,11,.12);color:#f59e0b}.pvp{background:rgba(239,68,68,.12);color:#f87171}.fp{background:rgba(124,58,237,.12);color:#a78bfa}
+/* GENERATE */
+.gprev{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:7px;margin-bottom:3px;font-size:11px;background:var(--card2);border:1px solid var(--border)}
+.fhdr{padding:7px 12px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;border-radius:6px;margin:8px 0 4px;display:flex;align-items:center;justify-content:space-between}
+#share-canvas{display:none}
+@media(max-width:900px){.main-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.hero{padding:20px 16px}.hero h1{font-size:24px}.stov{grid-template-columns:1fr 1fr}.fr2{grid-template-columns:1fr}.pg{grid-template-columns:1fr 1fr}.msb{font-size:36px}.lust2{display:none}}
+</style>
+</head>
+<script src="/db-sync.js"></script>
+<body>
+<nav>
+  <div class="nav-inner">
+    <div class="logo" onclick="goPage('home')"><span class="ayo">Ayo</span><span class="score">Score</span></div>
+    <button class="nav-tab" data-page="home" onclick="goPage('home')">🏠 Home</button>
+    <button class="nav-tab" data-page="liga" onclick="goPage('liga')">🏆 Liga</button>
+    <button class="nav-tab" data-page="tim" onclick="goPage('tim')">🛡️ Tim</button>
+    <button class="nav-tab" data-page="klasemen" onclick="goPage('klasemen')">📊 Klasemen</button>
+    <button class="nav-tab" data-page="jadwal" onclick="goPage('jadwal')">📅 Jadwal</button>
+    <button class="nav-tab" data-page="pemain" onclick="goPage('pemain')">👤 Pemain</button>
+    <button class="nav-tab" data-page="lineup" onclick="goPage('lineup')">📋 Lineup</button>
+    <button class="nav-tab" data-page="berita" onclick="goPage('berita')">📰 Berita</button>
+    <button class="nav-tab" data-page="admin" id="admin-nav-tab" onclick="goPage('admin')" style="display:none">⚙️ Admin</button>
+    <div class="nav-right">
+      <span class="admin-badge" id="admin-badge" style="display:none">👑 Admin</span>
+      <button class="btn-login" id="login-btn" onclick="showLogin()">🔐 Login</button>
+      <button class="btn-logout" id="logout-btn" style="display:none" onclick="doLogout()">Keluar</button>
+    </div>
+  </div>
+</nav>
+
+<div class="mo" id="mo-login">
+  <div class="lbox">
+    <div class="lic">🔐</div><h2>Admin AyoScore</h2><p class="lsub">Masukkan kredensial admin</p>
+    <div class="iw"><span class="iico">👤</span><input type="text" id="l-user" placeholder="Username" maxlength="32" onkeydown="if(event.key==='Enter')tryLogin()"></div>
+    <div class="iw"><span class="iico">🔑</span><input type="password" id="l-pass" placeholder="Password" maxlength="64" onkeydown="if(event.key==='Enter')tryLogin()"><button class="tpw" onclick="togglePw()" id="pw-t">👁️</button></div>
+    <div class="abar"><div class="afill" id="afill" style="width:0%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:2px"><span>Percobaan</span><span id="atxt">0/5</span></div>
+    <button class="bsi" id="bsi" onclick="tryLogin()">🚀 Masuk</button>
+    <div class="ab ae" id="aerr">❌ <span id="errmsg"></span></div>
+    <div class="ab al" id="alck">🔒 <span id="lckmsg"></span></div>
+  </div>
+</div>
+
+<div class="mo" id="mo-detail">
+  <div class="mb"><button class="mc" onclick="closeMo('mo-detail')">✕</button><div id="detail-content"></div></div>
+</div>
+
+<!-- PAGES -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.2);padding:4px 12px;border-radius:18px;font-size:11px;color:var(--accent);margin-bottom:14px"><span class="ldot"></span><span id="live-cnt">0</span> Match Live</div>
+    <h1>Platform <span>Manajemen Liga</span><br>Olahraga Indonesia</h1>
+    <p>Klasemen real-time, jadwal, data pemain &amp; tim lengkap dalam satu platform modern.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="goPage('liga')">🏆 Liga</button>
+      <button class="btn-outline" onclick="goPage('klasemen')">📊 Klasemen →</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><h3 id="hs-l">0</h3><p>Liga</p></div>
+      <div class="hero-stat"><h3 id="hs-t">0</h3><p>Tim</p></div>
+      <div class="hero-stat"><h3 id="hs-p">0</h3><p>Pemain</p></div>
+      <div class="hero-stat"><h3 id="hs-m">0</h3><p>Pertandingan</p></div>
+    </div>
+  </div>
+  <div class="main-grid">
+    <div>
+      <div class="section-header"><div class="section-title"><span class="ldot"></span>Live &amp; Hasil</div><span class="section-link" onclick="goPage('jadwal')">Lihat semua →</span></div>
+      <div id="home-matches"></div>
+      <div class="section-header" style="margin-top:20px"><div class="section-title">⚽ Top Skor</div><span class="section-link" onclick="goPage('pemain')">Semua →</span></div>
+      <div class="card" id="top-scorer"></div>
+      <div class="section-header" style="margin-top:20px"><div class="section-title">📰 Berita</div><span class="section-link" onclick="goPage('berita')">Semua →</span></div>
+      <div id="home-berita"></div>
+    </div>
+    <div>
+      <div class="widget"><div class="wt">🗓️ Mendatang</div><div id="upw"></div></div>
+      <div class="widget"><div class="wt">🏆 Klasemen Cepat</div><div id="minik"></div><div style="text-align:center;margin-top:8px"><span class="section-link" onclick="goPage('klasemen')">Lengkap →</span></div></div>
+      <div class="widget"><div class="wt">🟡 Disiplin</div><div id="disw"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-liga" class="page">
+  <div class="section-header"><div class="section-title">🏆 Liga</div><span style="font-size:11px;color:var(--muted)">Klik untuk detail</span></div>
+  <div id="liga-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:4px"></div>
+  <div id="liga-detail"></div>
+</div>
+
+<div id="page-tim" class="page">
+  <div class="section-header"><div class="section-title">🛡️ Tim</div></div>
+  <div class="tabs" id="tim-tabs"></div>
+  <div class="tg" id="team-grid"></div>
+</div>
+
+<div id="page-klasemen" class="page">
+  <div class="section-header"><div class="section-title">📊 Klasemen</div>
+    <div style="display:flex;gap:7px">
+      <button class="badd" onclick="dlKlasemen()">📥 Klasemen</button>
+      <button class="badd" onclick="dlTopSkor()">📥 Top Skor</button>
+    </div>
+  </div>
+  <div class="tabs" id="klas-tabs"></div>
+  <div id="klas-content"></div>
+</div>
+
+<div id="page-jadwal" class="page">
+  <div class="section-header"><div class="section-title">📅 Jadwal &amp; Hasil</div><button class="badd" onclick="dlHasil()">📥 Hasil</button></div>
+  <div class="tabs" id="jad-tabs"></div>
+  <div style="display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap">
+    <button class="tab active" onclick="setJF('all',this)">Semua</button>
+    <button class="tab" onclick="setJF('live',this)">🔴 Live</button>
+    <button class="tab" onclick="setJF('upcoming',this)">📅 Mendatang</button>
+    <button class="tab" onclick="setJF('done',this)">✅ Selesai</button>
+  </div>
+  <div id="jad-list"></div>
+</div>
+
+<div id="page-pemain" class="page">
+  <div class="section-header"><div class="section-title">👤 Pemain</div>
+    <input id="sp" placeholder="🔍 Cari nama..." style="width:190px;padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none;font-size:12px" oninput="renderPemain()">
+  </div>
+  <div style="display:flex;gap:5px;margin-bottom:10px">
+    <button class="tab active" id="ptab-pemain" onclick="setPTab('pemain',this)">👤 Pemain</button>
+    <button class="tab" id="ptab-pelatih" onclick="setPTab('pelatih',this)">🎽 Pelatih</button>
+    <button class="tab" id="ptab-official" onclick="setPTab('official',this)">📋 Official</button>
+  </div>
+  <div class="tabs" id="pem-tabs"></div>
+  <div class="pg" id="pem-grid"></div>
+</div>
+
+<div id="page-lineup" class="page">
+  <div class="section-header"><div class="section-title">📋 Lineup</div></div>
+  <div class="tabs" id="lu-tabs"></div>
+  <div id="lu-teams" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px"></div>
+  <div id="lu-main"><div class="luempty" style="background:var(--card);border:1px solid var(--border);border-radius:18px"><div style="font-size:40px;margin-bottom:10px">📋</div><div>Pilih tim untuk lineup</div></div></div>
+</div>
+
+<div id="page-berita" class="page">
+  <div class="main-grid">
+    <div>
+      <div class="section-header"><div class="section-title">📰 Berita</div></div>
+      <div class="tabs" id="ber-tabs"></div>
+      <div id="ber-list"></div>
+    </div>
+    <div>
+      <div class="widget"><div class="wt">🗓️ Jadwal</div><div id="ber-upw"></div></div>
+      <div class="widget"><div class="wt">🔥 Terbaru</div><div id="ber-pop"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-admin" class="page">
+  <div id="adm-lock" class="lock"><div style="font-size:56px;margin-bottom:14px">🔒</div><h2 style="margin-bottom:6px">Area Terbatas</h2><p style="color:var(--muted);margin-bottom:18px;font-size:12px">Admin only.</p><button class="badd" onclick="showLogin()">🔐 Login</button></div>
+  <div id="adm-content" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div><div style="font-size:18px;font-weight:800">⚙️ Panel Admin</div><div style="font-size:11px;color:var(--muted)">Sesi: <span id="sess-t" style="color:var(--accent)"></span></div></div>
+    </div>
+    <div class="stov">
+      <div class="stoc"><div class="ston" id="ast-l">0</div><div class="stol">🏆 Liga</div></div>
+      <div class="stoc"><div class="ston" id="ast-t">0</div><div class="stol">👥 Tim</div></div>
+      <div class="stoc"><div class="ston" id="ast-p">0</div><div class="stol">👤 Pemain</div></div>
+      <div class="stoc"><div class="ston" id="ast-m">0</div><div class="stol">⚽ Match</div></div>
+    </div>
+    <div class="atabs">
+      <button class="atab active" onclick="swAdm('liga',this)">🏆 Liga</button>
+      <button class="atab" onclick="swAdm('team',this)">🛡️ Tim</button>
+      <button class="atab" onclick="swAdm('player',this)">👤 Pemain</button>
+      <button class="atab" onclick="swAdm('pelatih',this)">🎽 Pelatih</button>
+      <button class="atab" onclick="swAdm('official',this)">📋 Official</button>
+      <button class="atab" onclick="swAdm('generate',this)">🗓️ Generate</button>
+      <button class="atab" onclick="swAdm('match',this)">⚽ Match</button>
+      <button class="atab" onclick="swAdm('events',this)">🎯 Event</button>
+      <button class="atab" onclick="swAdm('berita',this)">📰 Berita</button>
+      <button class="atab" onclick="swAdm('kartu',this)">🟡 Kartu</button>
+      <button class="atab" onclick="swAdm('lineup',this)">📋 Lineup</button>
+    </div>
+
+    <div id="af-liga">
+      <div class="fr2">
+        <div class="ap"><div class="at">➕ Tambah Liga</div>
+          <div class="fg"><label>Nama Liga</label><input id="fl-n" placeholder="Liga Super Indonesia"></div>
+          <div class="fr2">
+            <div class="fg"><label>Olahraga</label><select id="fl-sp"><option>⚽ Sepak Bola</option><option>🎯 Futsal</option><option>🏀 Basket</option><option>🏐 Voli</option><option>🏸 Badminton</option></select></div>
+            <div class="fg"><label>Musim</label><input id="fl-ms" placeholder="2025/2026"></div>
+          </div>
+          <div class="fg"><label>⚙️ Sistem Liga</label>
+            <select id="fl-sis" onchange="onSisChange()">
+              <option value="double_rr">🔁 Double Round Robin</option>
+              <option value="round_robin">🔄 Round Robin</option>
+              <option value="multi_rr">🔃 Multiple Round Robin</option>
+              <option value="liga_playoff">🏆 Liga + Playoff</option>
+              <option value="grup">👥 Sistem Grup</option>
+              <option value="gugur">⚔️ Sistem Gugur</option>
+            </select>
+          </div>
+          <div id="fl-sis-ext" style="background:rgba(139,92,246,.05);border:1px solid rgba(139,92,246,.2);border-radius:9px;padding:10px;margin-bottom:10px;display:none">
+            <div id="fl-sis-desc" style="font-size:10px;color:#a78bfa;margin-bottom:8px"></div>
+            <div id="fl-ext-mrr" style="display:none"><div class="fg"><label>Jumlah Putaran</label><input id="fl-rounds" type="number" value="3" min="2" max="8"></div></div>
+            <div id="fl-ext-po" style="display:none"><div class="fg"><label>Tim Lolos Playoff</label><select id="fl-pon"><option value="4">4 Tim</option><option value="8">8 Tim</option><option value="16">16 Tim</option></select></div></div>
+            <div id="fl-ext-grp" style="display:none">
+              <div class="fr2">
+                <div class="fg"><label>Jumlah Grup</label><select id="fl-ng"><option value="2">2 Grup</option><option value="4">4 Grup</option><option value="8">8 Grup</option></select></div>
+                <div class="fg"><label>Maju/Grup</label><input id="fl-ag" type="number" value="2" min="1" max="4"></div>
+              </div>
+            </div>
+            <div id="fl-ext-gugur" style="display:none"><div class="fg"><label>Format</label><select id="fl-gfmt"><option value="single">Single Elimination</option><option value="double">Double Elimination</option></select></div></div>
+          </div>
+          <div class="fr2">
+            <div class="fg"><label>📅 Mulai</label><input type="date" id="fl-ds"></div>
+            <div class="fg"><label>🏁 Berakhir</label><input type="date" id="fl-de"></div>
+          </div>
+          <div class="fg"><label>Logo</label>
+            <div class="upl" onclick="document.getElementById('fl-ph').click()">
+              <input type="file" id="fl-ph" accept="image/*" style="display:none" onchange="prevPh('fl-ph','fl-prv','fl-hint')">
+              <img id="fl-prv" style="display:none" class="uppr"><div id="fl-hint"><div style="font-size:22px">🏆</div><div style="font-size:11px;color:var(--muted)">Upload logo</div></div>
+            </div>
+          </div>
+          <button class="badd" onclick="addLiga()">➕ Tambah Liga</button>
+          <div class="smsg" id="msg-liga">✅ Ditambahkan!</div>
+        </div>
+        <div class="ap"><div class="at">📋 Daftar Liga</div><div id="list-liga" style="max-height:500px;overflow-y:auto"></div></div>
+      </div>
+    </div>
+
+    <div id="af-generate" style="display:none">
+      <div class="fr2">
+        <div class="ap"><div class="at">🗓️ Generate Jadwal</div>
+          <div class="fg"><label>Liga</label><select id="fg-lig" onchange="onGenChange()"></select></div>
+          <div id="fg-sisbox" style="display:none;border-radius:10px;padding:10px;border:1px solid rgba(139,92,246,.2);background:rgba(139,92,246,.05);margin-bottom:10px">
+            <div id="fg-sislbl" style="font-weight:800;font-size:12px;margin-bottom:4px"></div>
+            <div id="fg-sisdesc" style="font-size:11px;color:var(--muted);line-height:1.6"></div>
+            <div id="fg-tinfo" style="font-size:11px;margin-top:6px"></div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:10px;margin-bottom:10px">
+            <div class="fr2">
+              <div class="fg"><label>Tanggal Mulai</label><input type="date" id="fg-dt" onchange="updGenPrev()"></div>
+              <div class="fg"><label>Interval (hari)</label><input type="number" id="fg-int" value="7" min="1" max="30" onchange="updGenPrev()"></div>
+            </div>
+            <div class="fr2">
+              <div class="fg"><label>Jam</label><input type="time" id="fg-tm" value="15:00"></div>
+              <div class="fg"><label>Venue Default</label><input id="fg-ven" placeholder="Nama lapangan"></div>
+            </div>
+          </div>
+          <div id="fg-cnt" style="display:none;border-radius:9px;padding:9px 12px;border:1px solid rgba(16,185,129,.2);background:rgba(16,185,129,.05);margin-bottom:10px">
+            <div id="fg-cntlbl" style="font-size:12px;color:var(--green);font-weight:700"></div>
+            <div id="fg-phases" style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.7"></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="badd" onclick="doGenerate()" style="flex:1">🗓️ Generate!</button>
+            <button class="badd" onclick="clearUpcoming()" style="background:rgba(239,68,68,.2);color:#ef4444;border:1px solid rgba(239,68,68,.3)">🗑️ Reset</button>
+          </div>
+          <div class="smsg" id="msg-gen">✅ Jadwal digenerate!</div>
+        </div>
+        <div class="ap" style="padding:0;overflow:hidden">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <div class="at" style="margin:0">📋 Preview</div><span id="fg-total" style="font-size:10px;color:var(--muted)"></span>
+          </div>
+          <div id="fg-prev" style="max-height:540px;overflow-y:auto;padding:10px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="af-team" style="display:none">
+      <div class="fr2">
+        <div class="ap"><div class="at">➕ Tambah Tim</div>
+          <div class="fg"><label>Nama Tim</label><input id="ft-n" placeholder="Nama tim"></div>
+          <div class="fr2"><div class="fg"><label>Liga</label><select id="ft-l"></select></div><div class="fg"><label>Kota</label><input id="ft-k" placeholder="Kota"></div></div>
+          <div class="fg"><label>Warna</label><input type="color" id="ft-c" value="#e63946" style="height:38px;cursor:pointer"></div>
+          <div class="fg"><label>Logo</label>
+            <div class="upl" onclick="document.getElementById('ft-ph').click()">
+              <input type="file" id="ft-ph" accept="image/*" style="display:none" onchange="prevPh('ft-ph','ft-prv','ft-hint')">
+              <img id="ft-prv" style="display:none" class="uppr"><div id="ft-hint"><div style="font-size:22px">🛡️</div><div style="font-size:11px;color:var(--muted)">Upload logo</div></div>
+            </div>
+          </div>
+          <button class="badd" onclick="addTeam()">➕ Tambah</button><div class="smsg" id="msg-team">✅ Ditambahkan!</div>
+        </div>
+        <div class="ap"><div class="at">🛡️ Daftar Tim</div><div id="list-team" style="max-height:420px;overflow-y:auto"></div></div>
+      </div>
+    </div>
+
+    <div id="af-player" style="display:none">
+      <div class="fr2">
+        <div class="ap"><div class="at">➕ Tambah Pemain</div>
+          <div class="fr2"><div class="fg"><label>Nama</label><input id="fp-n" placeholder="Nama lengkap"></div><div class="fg"><label>No.</label><input id="fp-no" type="number" placeholder="#" min="1" max="99"></div></div>
+          <div class="fr2"><div class="fg"><label>Posisi</label><select id="fp-pos"><option>Penyerang</option><option>Gelandang</option><option>Bertahan</option><option>Kiper</option><option>Pivot</option><option>Flank</option></select></div><div class="fg"><label>Tim</label><select id="fp-t"></select></div></div>
+          <div class="fg"><label>🪪 NISN/No. Identitas</label><input id="fp-nisn" placeholder="NISN/KTP" maxlength="20"></div>
+          <div class="fr2"><div class="fg"><label>Usia</label><input id="fp-us" type="number" placeholder="22"></div><div class="fg"><label>Tinggi (cm)</label><input id="fp-ti" type="number" placeholder="175"></div></div>
+          <div class="fr3"><div class="fg"><label>⚽ Gol</label><input id="fp-g" type="number" value="0" min="0"></div><div class="fg"><label>🎯 Assist</label><input id="fp-a" type="number" value="0" min="0"></div><div class="fg"><label>🔴 K.Merah</label><input id="fp-km" type="number" value="0" min="0"></div></div>
+          <div class="fg"><label>Foto</label>
+            <div class="upl" onclick="document.getElementById('fp-ph').click()">
+              <input type="file" id="fp-ph" accept="image/*" style="display:none" onchange="prevPh('fp-ph','fp-prv','fp-hint')">
+              <img id="fp-prv" style="display:none" class="uppr"><div id="fp-hint"><div style="font-size:22px">👤</div><div style="font-size:11px;color:var(--muted)">Upload foto</div></div>
+            </div>
+          </div>
+          <button class="badd" onclick="addPlayer()">➕ Tambah</button><div class="smsg" id="msg-player">✅ Ditambahkan!</div>
+        </div>
+        <div class="ap"><div class="at">📋 Daftar Pemain</div><div id="list-player" style="max-height:480px;overflow-y:auto"></div></div>
+      </div>
+    </div>
+
+    <div id="af-pelatih" style="display:none">
+      <div class="fr2">
+        <div class="ap"><div class="at">➕ Tambah Pelatih</div>
+          <div class="fr2"><div class="fg"><label>Nama</label><input id="fpt-n" placeholder="Nama"></div><div class="fg"><label>Tim</label><select id="fpt-t"></select></div></div>
+          <div class="fr2"><div class="fg"><label>Jabatan</label><select id="fpt-j"><option>Pelatih Kepala</option><option>Asisten Pelatih</option><option>Pelatih Kiper</option><option>Pelatih Fisik</option><option>Analis</option></select></div><div class="fg"><label>Usia</label><input id="fpt-us" type="number" placeholder="40"></div></div>
+          <div class="fg"><label>Foto</label>
+            <div class="upl" onclick="document.getElementById('fpt-ph').click()">
+              <input type="file" id="fpt-ph" accept="image/*" style="display:none" onchange="prevPh('fpt-ph','fpt-prv','fpt-hint')">
+              <img id="fpt-prv" style="display:none" class="uppr"><div id="fpt-hint"><div style="font-size:22px">🎽</div><div style="font-size:11px;color:var(--muted)">Upload foto</div></div>
+            </div>
+          </div>
+          <button class="badd" onclick="addPelatih()">➕ Tambah</button><div class="smsg" id="msg-pelatih">✅ Ditambahkan!</div>
+        </div>
+        <div class="ap"><div class="at">🎽 Daftar Pelatih</div><div id="list-pelatih" style="max-height:480px;overflow-y:auto"></div></div>
+      </div>
+    </div>
+
+    <div id="af-official" style="display:none">
+      <div class="fr2">
+        <div class="ap"><div class="at">➕ Tambah Official</div>
+          <div class="fr2"><div class="fg"><label>Nama</label><input id="fo-n" placeholder="Nama"></div><div class="fg"><label>Tim</label><select id="fo-t"></select></div></div>
+          <div class="fr2"><div class="fg"><label>Jabatan</label><select id="fo-j"><option>Manajer Tim</option><option>Dokter Tim</option><option>Fisioterapis</option><option>Kit Man</option><option>Media Officer</option><option>Sekretaris</option></select></div><div class="fg"><label>No. HP</label><input id="fo-hp" placeholder="08xx"></div></div>
+          <div class="fg"><label>Foto</label>
+            <div class="upl" onclick="document.getElementById('fo-ph').click()">
+              <input type="file" id="fo-ph" accept="image/*" style="display:none" onchange="prevPh('fo-ph','fo-prv','fo-hint')">
+              <img id="fo-prv" style="display:none" class="uppr"><div id="fo-hint"><div style="font-size:22px">📋</div><div style="font-size:11px;color:var(--muted)">Upload foto</div></div>
+            </div>
+          </div>
+          <button class="badd" onclick="addOfficial()">➕ Tambah</button><div class="smsg" id="msg-official">✅ Ditambahkan!</div>
+        </div>
+        <div class="ap"><div class="at">📋 Daftar Official</div><div id="list-official" style="max-height:480px;overflow-y:auto"></div></div>
+      </div>
+    </div>
+
+    <div id="af-match" style="display:none">
+      <div class="fr2">
+        <div class="ap"><div class="at">➕ Tambah Match Manual</div>
+          <div class="fg"><label>Liga</label><select id="fm-l" onchange="filterTeams()"></select></div>
+          <div class="fr2"><div class="fg"><label>Tuan Rumah</label><select id="fm-h"></select></div><div class="fg"><label>Tamu</label><select id="fm-a"></select></div></div>
+          <div class="fr2"><div class="fg"><label>Tanggal</label><input type="date" id="fm-d"></div><div class="fg"><label>Jam</label><input type="time" id="fm-t" value="15:00"></div></div>
+          <div class="fr2"><div class="fg"><label>Venue</label><input id="fm-v" placeholder="Lapangan"></div><div class="fg"><label>Fase</label><input id="fm-f" placeholder="Putaran 1, Final…"></div></div>
+          <div class="fg"><label>Status</label><select id="fm-s" onchange="togScore()"><option value="upcoming">📅 Akan Datang</option><option value="live">🔴 Live</option><option value="done">✅ Selesai</option></select></div>
+          <div id="score-f" style="display:none"><div class="fr2"><div class="fg"><label>Skor Home</label><input id="fm-sh" type="number" value="0" min="0"></div><div class="fg"><label>Skor Away</label><input id="fm-sa" type="number" value="0" min="0"></div></div></div>
+          <button class="badd" onclick="addMatch()">➕ Tambah</button><div class="smsg" id="msg-match">✅ Ditambahkan!</div>
+        </div>
+        <div class="ap"><div class="at">📋 Daftar Match</div><div id="list-match" style="max-height:420px;overflow-y:auto"></div></div>
+      </div>
+    </div>
+
+    <div id="af-events" style="display:none">
+      <div class="fr2">
+        <div class="ap"><div class="at">🎯 Event Match</div>
+          <div class="fg"><label>Pertandingan</label><select id="fe-m" onchange="renderEvList()"></select></div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:10px;margin-bottom:10px">
+            <div class="fr2"><div class="fg"><label>Jenis</label><select id="fe-t"><option value="goal">⚽ Gol</option><option value="assist">🎯 Assist</option><option value="yellow">🟡 K.Kuning</option><option value="red">🔴 K.Merah</option></select></div><div class="fg"><label>Menit</label><input id="fe-mn" type="number" placeholder="45" min="1" max="120"></div></div>
+            <div class="fg"><label>Pemain</label><select id="fe-p"></select></div>
+            <button class="badd" onclick="addEvent()">➕ Tambah</button><div class="smsg" id="msg-event">✅ Ditambahkan!</div>
+          </div>
+        </div>
+        <div class="ap"><div class="at" id="ev-title">📋 Event</div><div id="list-events" style="max-height:500px;overflow-y:auto"></div></div>
+      </div>
+    </div>
+
+    <div id="af-berita" style="display:none">
+      <div class="fr2">
+        <div class="ap"><div class="at">➕ Tambah Berita</div>
+          <div class="fg"><label>Judul</label><input id="fb-j" placeholder="Judul berita"></div>
+          <div class="fr2"><div class="fg"><label>Kategori</label><select id="fb-c"><option value="jadwal">📅 Jadwal</option><option value="hasil">✅ Hasil</option><option value="info">ℹ️ Info</option><option value="transfer">🔄 Transfer</option></select></div><div class="fg"><label>Liga</label><select id="fb-l"></select></div></div>
+          <div class="fg"><label>Konten</label><textarea id="fb-k" placeholder="Isi berita"></textarea></div>
+          <div class="fg"><label>Emoji</label><input id="fb-e" placeholder="🏆" maxlength="2"></div>
+          <button class="badd" onclick="addBerita()">➕ Terbitkan</button><div class="smsg" id="msg-berita">✅ Diterbitkan!</div>
+        </div>
+        <div class="ap"><div class="at">📋 Berita</div><div id="list-berita" style="max-height:420px;overflow-y:auto"></div></div>
+      </div>
+    </div>
+
+    <div id="af-kartu" style="display:none">
+      <div class="fr2">
+        <div class="ap"><div class="at">🟡 Input Kartu</div>
+          <div class="fg"><label>Pertandingan</label><select id="fk-m"></select></div>
+          <div class="fg"><label>Pemain</label><select id="fk-p"></select></div>
+          <div class="fr2"><div class="fg"><label>Jenis</label><select id="fk-t"><option value="yellow">🟡 Kuning</option><option value="red">🔴 Merah</option></select></div><div class="fg"><label>Menit</label><input id="fk-mn" type="number" placeholder="45" min="1" max="120"></div></div>
+          <div class="fg"><label>Alasan</label><input id="fk-al" placeholder="Pelanggaran"></div>
+          <button class="badd" onclick="addKartu()">➕ Catat</button><div class="smsg" id="msg-kartu">✅ Dicatat!</div>
+        </div>
+        <div class="ap"><div class="at">📋 Log Kartu</div><div id="list-kartu" style="max-height:420px;overflow-y:auto"></div></div>
+      </div>
+    </div>
+
+    <div id="af-lineup" style="display:none">
+      <div class="fr2">
+        <div class="ap"><div class="at">📋 Atur Lineup</div>
+          <div class="fg"><label>Tim</label><select id="flin-t" onchange="loadLinAdmin()"></select></div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:10px;margin-bottom:10px">
+            <div class="fr2">
+              <div class="fg"><label>Pemain</label><select id="flin-p"></select></div>
+              <div class="fg"><label>Status</label><select id="flin-s"><option value="starter">⚡ Starting</option><option value="cadangan">🔄 Cadangan</option></select></div>
+            </div>
+            <button class="badd" onclick="addToLineup()">➕ Tambah</button><div class="smsg" id="msg-lineup">✅ Diperbarui!</div>
+          </div>
+        </div>
+        <div class="ap"><div class="at">📋 Lineup Saat Ini</div><div id="list-lineup" style="max-height:520px;overflow-y:auto"><p style="color:var(--muted);font-size:11px">Pilih tim.</p></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<canvas id="share-canvas"></canvas>
+<footer style="background:#060606;border-top:1px solid #161616;margin-top:40px;padding:16px 0">
+  <div style="max-width:1320px;margin:auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div style="font-size:18px;font-weight:900"><span style="color:#ef4444">Ayo</span><span style="color:#fff">Score</span></div>
+    <span style="font-size:11px;color:#444">© 2026 AyoScore.com</span>
+  </div>
+</footer>
+
+<script>
+// ========== SISTEM DEFINITIONS ==========
+const SIS={
+  round_robin:{label:'🔄 Round Robin',color:'#10b981',desc:'Setiap tim bertemu sekali. Poin diakumulasi untuk klasemen.'},
+  double_rr:{label:'🔁 Double Round Robin',color:'#3b82f6',desc:'Kandang & tandang. Setiap tim bertemu 2 kali.'},
+  multi_rr:{label:'🔃 Multiple Round Robin',color:'#8b5cf6',desc:'Setiap tim bertemu N putaran.'},
+  liga_playoff:{label:'🏆 Liga + Playoff',color:'#f59e0b',desc:'Fase liga menentukan tim lolos ke babak playoff gugur.'},
+  grup:{label:'👥 Sistem Grup',color:'#ec4899',desc:'Tim dibagi ke beberapa grup, lalu babak knockout antar juara grup.'},
+  gugur:{label:'⚔️ Sistem Gugur',color:'#ef4444',desc:'Kalah = tersingkir. Bracket dari babak awal hingga final.'}
+};
+const KO_NAMES=['Final','Semifinal','Perempat Final','Babak 16 Besar','Babak 32 Besar'];
+function koFase(total,idx){const d=total-1-idx;return KO_NAMES[d]||('Babak '+(idx+1));}
+function isLigaFase(fase){if(!fase)return true;return !['Final','Semifinal','Perempat','Babak 16','Babak 32','Playoff'].some(k=>fase.includes(k));}
+
+// ========== SISTEM FORM ==========
+function onSisChange(){
+  const v=document.getElementById('fl-sis').value;
+  const ext=document.getElementById('fl-sis-ext');
+  const desc=document.getElementById('fl-sis-desc');
+  ['fl-ext-mrr','fl-ext-po','fl-ext-grp','fl-ext-gugur'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
+  const s=SIS[v];
+  if(s)desc.textContent=s.desc;
+  const map={multi_rr:'mrr',liga_playoff:'po',grup:'grp',gugur:'gugur'};
+  if(map[v]){ext.style.display='block';document.getElementById('fl-ext-'+map[v]).style.display='block';}
+  else ext.style.display='none';
+}
+function getSisCfg(){
+  const v=document.getElementById('fl-sis').value;
+  const c={};
+  if(v==='multi_rr')c.rounds=parseInt(document.getElementById('fl-rounds').value)||3;
+  if(v==='liga_playoff')c.playoffTeams=parseInt(document.getElementById('fl-pon').value)||4;
+  if(v==='grup'){c.numGroups=parseInt(document.getElementById('fl-ng').value)||2;c.advPerGroup=parseInt(document.getElementById('fl-ag').value)||2;}
+  if(v==='gugur')c.gugurFmt=document.getElementById('fl-gfmt').value||'single';
+  return c;
+}
+
+// ========== SCHEDULE BUILDER ==========
+function buildRR(tids){
+  const ids=[...tids];
+  if(ids.length%2!==0)ids.push(null);
+  const n=ids.length,rounds=[];
+  for(let r=0;r<n-1;r++){
+    const ms=[];
+    for(let i=0;i<n/2;i++){const h=ids[i],a=ids[n-1-i];if(h!==null&&a!==null)ms.push([h,a]);}
+    rounds.push(ms);
+    const last=ids.pop();ids.splice(1,0,last);
+  }
+  return rounds;
+}
+function buildKO(tids){
+  let teams=[...tids];const rounds=[];
+  while(teams.length>=2){
+    const ms=[];
+    for(let i=0;i<teams.length-1;i+=2)ms.push([teams[i],teams[i+1]]);
+    rounds.push(ms);teams=ms.map(([h])=>h);
+  }
+  return rounds;
+}
+function addDays(base,days){const d=new Date(base+'T00:00:00');d.setDate(d.getDate()+days);return d.toISOString().split('T')[0];}
+function buildSchedule(liga,teams,startDate,interval,time,venue){
+  const tids=teams.map(t=>t.id);
+  const cfg=liga.sisCfg||{};
+  const out=[];let off=0;
+  const push=(pairs,fase,round)=>{
+    const date=addDays(startDate,off);
+    pairs.forEach(([h,a])=>out.push({id:D.nM++,ligaId:liga.id,homeId:h,awayId:a,date,time,status:'upcoming',scoreH:0,scoreA:0,venue,round,fase}));
+    off+=interval;
+  };
+  switch(liga.sistem){
+    case 'round_robin':buildRR(tids).forEach((m,i)=>push(m,'Liga',i+1));break;
+    case 'double_rr':{
+      const r1=buildRR(tids);const r2=buildRR(tids).map(r=>r.map(([h,a])=>[a,h]));
+      r1.forEach((m,i)=>push(m,'Putaran 1',i+1));off+=interval;
+      r2.forEach((m,i)=>push(m,'Putaran 2',i+1));break;
+    }
+    case 'multi_rr':{
+      const nr=cfg.rounds||3;
+      for(let p=0;p<nr;p++){const rds=buildRR(tids);const fase='Putaran '+(p+1);const rev=p%2===1;rds.forEach((m,i)=>push(rev?m.map(([h,a])=>[a,h]):m,fase,i+1));off+=interval;}break;
+    }
+    case 'liga_playoff':{
+      buildRR(tids).forEach((m,i)=>push(m,'Fase Liga',i+1));off+=interval*2;
+      const pn=Math.min(cfg.playoffTeams||4,tids.length);const pt=tids.slice(0,pn);
+      const kr=buildKO(pt);kr.forEach((m,i)=>push(m,koFase(kr.length,i),i+1));break;
+    }
+    case 'grup':{
+      const ng=cfg.numGroups||2;const grps=Array.from({length:ng},()=>[]);
+      tids.forEach((id,i)=>grps[i%ng].push(id));
+      const gn='ABCDEFGH';
+      grps.forEach((gt,gi)=>{buildRR(gt).forEach((m,i)=>push(m,'Grup '+gn[gi],i+1));off+=interval;});
+      off+=interval*2;
+      const adv=cfg.advPerGroup||2;const kts=grps.flatMap(g=>g.slice(0,Math.min(adv,g.length)));
+      if(kts.length>=2){const kr=buildKO(kts);kr.forEach((m,i)=>push(m,koFase(kr.length,i),i+1));}break;
+    }
+    case 'gugur':{
+      const kr=buildKO(tids);const isDbl=(cfg.gugurFmt||'single')==='double';
+      kr.forEach((m,i)=>{const fase=koFase(kr.length,i);push(m,fase+' (Leg 1)',i+1);if(isDbl&&i<kr.length-1)push(m.map(([h,a])=>[a,h]),fase+' (Leg 2)',i+1);});break;
+    }
+  }
+  return out;
+}
+function prevSchedule(liga,teams,interval){
+  if(!liga||teams.length<2)return null;
+  const origN=D.nM;const gen=buildSchedule(liga,teams,'2026-01-01',interval,'15:00','-');
+  D.nM=origN;gen.forEach((m,i)=>m.id=origN+i);return gen;
+}
+function onGenChange(){
+  const lid=parseInt(document.getElementById('fg-lig')?.value);const liga=gL(lid);const box=document.getElementById('fg-sisbox');
+  if(!liga){if(box)box.style.display='none';return;}
+  const s=SIS[liga.sistem||'double_rr'];
+  if(box){box.style.display='block';box.style.borderColor=(s?.color||'#888')+'44';box.style.background=(s?.color||'#888')+'0a';
+    document.getElementById('fg-sislbl').innerHTML=`<span style="color:${s?.color||'#888'}">${s?.label||liga.sistem}</span>`;
+    document.getElementById('fg-sisdesc').textContent=s?.desc||'';
+    const teams=D.teams.filter(t=>t.ligaId===lid);const cfg=liga.sisCfg||{};
+    let info=teams.length+' tim';
+    if(liga.sistem==='multi_rr')info+=', '+( cfg.rounds||3)+' putaran';
+    if(liga.sistem==='liga_playoff')info+=', playoff '+(cfg.playoffTeams||4)+' tim';
+    if(liga.sistem==='grup')info+=', '+(cfg.numGroups||2)+' grup maju '+(cfg.advPerGroup||2);
+    document.getElementById('fg-tinfo').innerHTML=`<span style="background:rgba(255,255,255,.07);border-radius:5px;padding:2px 8px;font-size:10px">🛡️ ${info}</span>`;
+  }
+  updGenPrev();
+}
+function updGenPrev(){
+  const lidEl=document.getElementById('fg-lig');if(!lidEl)return;
+  const lid=parseInt(lidEl.value);const liga=gL(lid);
+  const interval=parseInt(document.getElementById('fg-int')?.value)||7;
+  const cntBox=document.getElementById('fg-cnt');const pl=document.getElementById('fg-prev');const tl=document.getElementById('fg-total');
+  if(!liga){if(cntBox)cntBox.style.display='none';if(pl)pl.innerHTML='';return;}
+  const teams=D.teams.filter(t=>t.ligaId===lid);
+  if(teams.length<2){if(cntBox){cntBox.style.display='block';document.getElementById('fg-cntlbl').textContent='⚠️ Minimal 2 tim';document.getElementById('fg-phases').textContent='';}if(pl)pl.innerHTML='<p style="color:var(--muted);font-size:11px;padding:10px">Belum cukup tim.</p>';return;}
+  const prev=prevSchedule(liga,teams,interval);
+  if(!prev||!prev.length){if(cntBox)cntBox.style.display='none';if(pl)pl.innerHTML='';return;}
+  const fm={};prev.forEach(m=>{if(!fm[m.fase])fm[m.fase]=[];fm[m.fase].push(m);});
+  const fl=Object.keys(fm);
+  if(cntBox){cntBox.style.display='block';document.getElementById('fg-cntlbl').textContent='✅ '+prev.length+' pertandingan akan digenerate';
+    document.getElementById('fg-phases').innerHTML=fl.map(f=>`<span style="background:rgba(139,92,246,.1);color:#a78bfa;padding:1px 8px;border-radius:4px;margin-right:4px;font-size:10px">${f} (${fm[f].length})</span>`).join('');}
+  if(tl)tl.textContent=prev.length+' match';
+  if(pl){let h='';fl.forEach(fase=>{const fc=isLigaFase(fase)?'#10b981':'#f59e0b';h+=`<div class="fhdr" style="background:${fc}11;color:${fc};border:1px solid ${fc}22">${fase}<span style="opacity:.7">${fm[fase].length}</span></div>`;fm[fase].forEach(m=>{const hm=gT(m.homeId),am=gT(m.awayId);h+=`<div class="gprev">${tAvt(hm,18)}<span style="font-weight:600;font-size:11px;flex:1">${hm?.nama||'?'} vs ${am?.nama||'?'}</span>${tAvt(am,18)}<span style="font-size:10px;color:var(--muted)">${fmtD(m.date)}</span></div>`;});});pl.innerHTML=h;}
+}
+function doGenerate(){
+  if(!guardAdm())return;
+  const lid=parseInt(document.getElementById('fg-lig').value);const liga=gL(lid);
+  if(!liga)return alert('Pilih liga!');
+  const teams=D.teams.filter(t=>t.ligaId===lid);
+  if(teams.length<2)return alert('Minimal 2 tim!');
+  const sd=document.getElementById('fg-dt').value;if(!sd)return alert('Pilih tanggal mulai!');
+  const exist=D.matches.filter(m=>m.ligaId===lid);
+  if(exist.length>0){if(!confirm(`Liga ini sudah punya ${exist.length} match. Hapus UPCOMING & generate baru?`))return;D.matches=D.matches.filter(m=>!(m.ligaId===lid&&m.status==='upcoming'));}
+  const interval=parseInt(document.getElementById('fg-int').value)||7;
+  const time=document.getElementById('fg-tm').value||'15:00';
+  const venue=document.getElementById('fg-ven').value||'-';
+  const newMs=buildSchedule(liga,teams,sd,interval,time,venue);
+  newMs.forEach(m=>{if(!D.evs[m.id])D.evs[m.id]=[];});
+  D.matches.push(...newMs);
+  showMsg('msg-gen');renderLists();refreshSels();updGenPrev();
+  alert('✅ '+newMs.length+' pertandingan digenerate untuk '+liga.nama+'!');
+}
+function clearUpcoming(){
+  if(!guardAdm())return;
+  const lid=parseInt(document.getElementById('fg-lig').value);if(!lid)return alert('Pilih liga!');
+  const n=D.matches.filter(m=>m.ligaId===lid&&m.status==='upcoming').length;
+  if(!n)return alert('Tidak ada upcoming!');
+  if(!confirm('Hapus '+n+' pertandingan upcoming?'))return;
+  D.matches=D.matches.filter(m=>!(m.ligaId===lid&&m.status==='upcoming'));
+  renderLists();refreshSels();updGenPrev();
+}
+
+// ========== AUTH ==========
+const SEC={maxA:5,lockDur:5*60*1000,att:0,lockedUntil:0,token:null,exp:0,dur:60*60*1000,lastAct:Date.now(),
+  check(u,p){const EU='zaelzi',EP='ZaelZi!2023';if(u.trim().length!==EU.length||p.trim().length!==EP.length)return false;let ok=0;for(let i=0;i<EU.length;i++)ok+=(u.trim().charCodeAt(i)!==EU.charCodeAt(i)?1:0);for(let i=0;i<EP.length;i++)ok+=(p.trim().charCodeAt(i)!==EP.charCodeAt(i)?1:0);return ok===0;},
+  isLocked(){return Date.now()<this.lockedUntil;},
+  ok(){if(!this.token)return false;if(Date.now()>this.exp){this.token=null;return false;}if(Date.now()-this.lastAct<5*60*1000)this.exp=Date.now()+this.dur;return true;},
+  gen(){const a=new Uint8Array(32);crypto.getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,'0')).join('');}
+};
+document.addEventListener('click',()=>SEC.lastAct=Date.now());
+let _sT=null;
+function startSessTimer(){clearInterval(_sT);_sT=setInterval(()=>{const el=document.getElementById('sess-t');if(!el)return;const rem=Math.max(0,SEC.exp-Date.now());const m=Math.floor(rem/60000),s=Math.floor((rem%60000)/1000);el.textContent=m+'m '+s+'s';el.style.color=rem<5*60*1000?'#ef4444':'var(--accent)';},1000);}
+function showLogin(){if(SEC.ok()){goPage('admin');return;}document.getElementById('mo-login').classList.add('show');setTimeout(()=>document.getElementById('l-user').focus(),100);}
+function closeMo(id){document.getElementById(id).classList.remove('show');}
+function togglePw(){const i=document.getElementById('l-pass'),b=document.getElementById('pw-t');i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'👁️':'🙈';}
+function updBar(){document.getElementById('afill').style.width=(SEC.isLocked()?100:SEC.att/SEC.maxA*100)+'%';document.getElementById('atxt').textContent=SEC.att+'/'+SEC.maxA;}
+let _thr=false;
+function tryLogin(){
+  if(_thr)return;
+  if(SEC.isLocked()){const r=Math.ceil((SEC.lockedUntil-Date.now())/1000);showAl('alck','lckmsg','Terkunci '+r+' detik.');return;}
+  const u=document.getElementById('l-user').value,p=document.getElementById('l-pass').value;
+  if(!u||!p){showAl('aerr','errmsg','Isi semua field!');return;}
+  _thr=true;const btn=document.getElementById('bsi');btn.disabled=true;btn.textContent='⏳ Verifikasi...';
+  setTimeout(()=>{
+    _thr=false;btn.disabled=false;btn.textContent='🚀 Masuk';
+    if(SEC.check(u,p)){
+      SEC.att=0;SEC.token=SEC.gen();SEC.exp=Date.now()+SEC.dur;SEC.lastAct=Date.now();
+      document.getElementById('l-pass').value='';document.getElementById('l-user').value='';
+      closeMo('mo-login');
+      document.getElementById('login-btn').style.display='none';
+      document.getElementById('logout-btn').style.display='inline-block';
+      document.getElementById('admin-badge').style.display='inline-block';
+      document.getElementById('admin-nav-tab').style.display='inline-block';
+      startSessTimer();goPage('admin');
+    } else {
+      SEC.att++;updBar();document.getElementById('l-pass').value='';
+      if(SEC.att>=SEC.maxA){SEC.lockedUntil=Date.now()+SEC.lockDur;const li=setInterval(()=>{if(!SEC.isLocked()){clearInterval(li);SEC.att=0;updBar();document.getElementById('alck').style.display='none';}else{const r2=Math.ceil((SEC.lockedUntil-Date.now())/1000);showAl('alck','lckmsg','Terkunci '+r2+' detik.');}},1000);}
+      else showAl('aerr','errmsg','Salah. Sisa '+(SEC.maxA-SEC.att)+' percobaan.');
+    }
+  },1200);
+}
+function showAl(bId,sId,msg){document.getElementById(bId).style.display='flex';document.getElementById(sId).textContent=msg;}
+function doLogout(){SEC.token=null;SEC.exp=0;clearInterval(_sT);document.getElementById('login-btn').style.display='inline-block';document.getElementById('logout-btn').style.display='none';document.getElementById('admin-badge').style.display='none';document.getElementById('admin-nav-tab').style.display='none';goPage('home');}
+function guardAdm(){if(!SEC.ok()){doLogout();showLogin();return false;}return true;}
+
+// ========== PHOTO ==========
+const PS={};
+function prevPh(inp,prv,hint){const el=document.getElementById(inp);if(!el||!el.files||!el.files[0])return;const f=el.files[0];if(f.size>3*1024*1024){alert('Max 3MB!');el.value='';return;}const r=new FileReader();r.onload=e=>{PS['_'+inp]=e.target.result;const p=document.getElementById(prv);if(p){p.src=e.target.result;p.style.display='block';}const h=document.getElementById(hint);if(h)h.style.display='none';};r.readAsDataURL(f);}
+function clrPh(inp,prv,hint){delete PS['_'+inp];const p=document.getElementById(prv);if(p)p.style.display='none';const h=document.getElementById(hint);if(h)h.style.display='block';const el=document.getElementById(inp);if(el)el.value='';}
+
+// ========== DATA ==========
+let D={
+  ligas:[
+    {id:1,nama:'Liga Super Indonesia',sport:'⚽ Sepak Bola',musim:'2025/2026',ds:'2025-09-01',de:'2026-05-30',photo:null,sistem:'double_rr',sisCfg:{}},
+    {id:2,nama:'Copa Futsal Jakarta',sport:'🎯 Futsal',musim:'2026',ds:'2026-01-10',de:'2026-06-30',photo:null,sistem:'round_robin',sisCfg:{}},
+    {id:3,nama:'Liga Basket Nusantara',sport:'🏀 Basket',musim:'2025/2026',ds:'2025-10-01',de:'2026-04-20',photo:null,sistem:'liga_playoff',sisCfg:{playoffTeams:4}},
+  ],
+  teams:[
+    {id:1,ligaId:1,nama:'Garuda FC',kota:'Jakarta',color:'#ef4444',photo:null},
+    {id:2,ligaId:1,nama:'Sriwijaya United',kota:'Palembang',color:'#f59e0b',photo:null},
+    {id:3,ligaId:1,nama:'Majapahit City',kota:'Surabaya',color:'#10b981',photo:null},
+    {id:4,ligaId:1,nama:'Borobudur Athletic',kota:'Yogyakarta',color:'#7c3aed',photo:null},
+    {id:5,ligaId:2,nama:'MINU FC',kota:'Jakarta',color:'#00e5ff',photo:null},
+    {id:6,ligaId:2,nama:'Saliwunto FS',kota:'Balikpapan',color:'#ec4899',photo:null},
+    {id:7,ligaId:3,nama:'Jakarta Bulls',kota:'Jakarta',color:'#ef4444',photo:null},
+    {id:8,ligaId:3,nama:'Bandung Tigers',kota:'Bandung',color:'#f59e0b',photo:null},
+  ],
+  players:[
+    {id:1,teamId:1,nama:'Bima Sakti',no:10,pos:'Penyerang',nisn:'1234567890',usia:24,tinggi:178,photo:null,gol:12,assist:5,km:0},
+    {id:2,teamId:1,nama:'Wahyu Pratama',no:1,pos:'Kiper',nisn:'',usia:27,tinggi:185,photo:null,gol:0,assist:1,km:0},
+    {id:3,teamId:1,nama:'Aldi Kurniawan',no:5,pos:'Bertahan',nisn:'',usia:26,tinggi:182,photo:null,gol:1,assist:2,km:0},
+    {id:4,teamId:1,nama:'Rendi Setiawan',no:8,pos:'Gelandang',nisn:'',usia:23,tinggi:174,photo:null,gol:3,assist:6,km:0},
+    {id:5,teamId:1,nama:'Fajar Maulana',no:11,pos:'Penyerang',nisn:'',usia:22,tinggi:170,photo:null,gol:5,assist:3,km:0},
+    {id:6,teamId:1,nama:'Rizal Hasibuan',no:3,pos:'Bertahan',nisn:'',usia:28,tinggi:179,photo:null,gol:0,assist:1,km:0},
+    {id:7,teamId:1,nama:'Dicky Pranata',no:6,pos:'Gelandang',nisn:'',usia:25,tinggi:173,photo:null,gol:2,assist:4,km:0},
+    {id:8,teamId:1,nama:'Yusuf Ramadan',no:4,pos:'Bertahan',nisn:'',usia:29,tinggi:183,photo:null,gol:0,assist:0,km:1},
+    {id:9,teamId:1,nama:'Hendra Wijaya',no:7,pos:'Gelandang',nisn:'',usia:24,tinggi:171,photo:null,gol:4,assist:7,km:0},
+    {id:10,teamId:1,nama:'Andri Santoso',no:9,pos:'Penyerang',nisn:'',usia:21,tinggi:168,photo:null,gol:6,assist:2,km:0},
+    {id:11,teamId:1,nama:'Bayu Pratomo',no:2,pos:'Bertahan',nisn:'',usia:27,tinggi:180,photo:null,gol:1,assist:0,km:0},
+    {id:14,teamId:2,nama:'Rizki Maulana',no:9,pos:'Penyerang',nisn:'5678901234',usia:22,tinggi:173,photo:null,gol:9,assist:7,km:0},
+    {id:15,teamId:2,nama:'Sandi Kurnia',no:1,pos:'Kiper',nisn:'',usia:25,tinggi:184,photo:null,gol:0,assist:0,km:0},
+    {id:17,teamId:3,nama:'Dani Alves Jr',no:7,pos:'Gelandang',nisn:'',usia:25,tinggi:172,photo:null,gol:7,assist:11,km:1},
+    {id:18,teamId:4,nama:'Slamet Raharjo',no:4,pos:'Bertahan',nisn:'',usia:28,tinggi:180,photo:null,gol:2,assist:1,km:0},
+    {id:19,teamId:5,nama:'Eko Purnomo',no:11,pos:'Pivot',nisn:'',usia:23,tinggi:170,photo:null,gol:8,assist:6,km:0},
+    {id:20,teamId:7,nama:'Kevin Anggara',no:23,pos:'Gelandang',nisn:'',usia:21,tinggi:175,photo:null,gol:15,assist:8,km:0},
+  ],
+  pelatihs:[
+    {id:1,teamId:1,nama:'Bambang Hartono',jabatan:'Pelatih Kepala',usia:45,photo:null},
+    {id:2,teamId:2,nama:'Agus Salim',jabatan:'Pelatih Kepala',usia:42,photo:null},
+  ],
+  officials:[{id:1,teamId:1,nama:'Hendra Gunawan',jabatan:'Manajer Tim',hp:'0812-0003',photo:null}],
+  matches:[
+    {id:1,ligaId:1,homeId:1,awayId:2,date:'2026-03-04',time:'19:00',status:'done',scoreH:2,scoreA:1,venue:'GBK Jakarta',round:1,fase:'Putaran 1'},
+    {id:2,ligaId:1,homeId:3,awayId:4,date:'2026-03-04',time:'15:00',status:'done',scoreH:1,scoreA:1,venue:'Gelora 10 Nov',round:1,fase:'Putaran 1'},
+    {id:3,ligaId:1,homeId:1,awayId:3,date:'2026-03-10',time:'19:00',status:'upcoming',scoreH:0,scoreA:0,venue:'GBK Jakarta',round:2,fase:'Putaran 1'},
+    {id:4,ligaId:1,homeId:2,awayId:4,date:'2026-03-11',time:'15:30',status:'live',scoreH:1,scoreA:0,venue:'Jakabaring',round:2,fase:'Putaran 1'},
+    {id:5,ligaId:2,homeId:5,awayId:6,date:'2026-03-04',time:'10:30',status:'live',scoreH:1,scoreA:0,venue:'GOR Futsal',round:1,fase:'Liga'},
+    {id:6,ligaId:3,homeId:7,awayId:8,date:'2026-03-12',time:'18:00',status:'upcoming',scoreH:0,scoreA:0,venue:'GOR Balai Rakyat',round:1,fase:'Fase Liga'},
+  ],
+  evs:{
+    1:[{id:1,type:'goal',pid:1,menit:23,ket:''},{id:2,type:'assist',pid:4,menit:23,ket:''},{id:3,type:'yellow',pid:6,menit:41,ket:''},{id:4,type:'goal',pid:1,menit:67,ket:''}],
+    2:[{id:5,type:'goal',pid:17,menit:35,ket:''},{id:6,type:'goal',pid:18,menit:88,ket:''}],
+    4:[{id:7,type:'goal',pid:14,menit:12,ket:''}],
+    5:[{id:8,type:'goal',pid:19,menit:7,ket:''}],
+  },
+  berita:[
+    {id:1,judul:'Garuda FC Pimpin Klasemen',cat:'hasil',ligaId:1,konten:'Garuda FC menang 2-1 atas Sriwijaya United.',emoji:'🏆',ts:Date.now()-3600000},
+    {id:2,judul:'Derby Jawa Pekan Depan!',cat:'jadwal',ligaId:1,konten:'Garuda FC vs Majapahit City, 10 Maret 2026 pukul 19.00 di GBK.',emoji:'📅',ts:Date.now()-7200000},
+    {id:3,judul:'MINU FC Unggul di Copa Futsal',cat:'hasil',ligaId:2,konten:'MINU FC memimpin 1-0 atas Saliwunto FS.',emoji:'🎯',ts:Date.now()-1800000},
+  ],
+  kartu:[
+    {id:1,matchId:1,playerId:6,type:'yellow',menit:41,alasan:'Pelanggaran keras'},
+    {id:2,matchId:2,playerId:17,type:'red',menit:90,alasan:'Dua kartu kuning'},
+  ],
+  lineups:{
+    1:{starters:[1,2,3,4,5,6,7,8,9,10,11],cadangan:[]},
+    2:{starters:[14,15],cadangan:[]},
+  },
+  nL:4,nT:9,nP:21,nPT:3,nOF:2,nM:7,nB:4,nK:3,nEV:9
+};
+
+// ========== HELPERS ==========
+const gL=id=>D.ligas.find(l=>l.id===id);
+const gT=id=>D.teams.find(t=>t.id===id);
+const gP=id=>D.players.find(p=>p.id===id);
+const gM=id=>D.matches.find(m=>m.id===id);
+function ini(n){return(n||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
+function tAvt(t,sz){sz=sz||28;if(!t)return`<span style="width:${sz}px;height:${sz}px;border-radius:50%;background:#222;display:inline-flex;align-items:center;justify-content:center;font-size:${sz*.35}px;font-weight:800;flex-shrink:0">?</span>`;if(t.photo)return`<img src="${t.photo}" style="width:${sz}px;height:${sz}px;border-radius:50%;object-fit:cover;border:1.5px solid ${t.color};flex-shrink:0">`;return`<span style="width:${sz}px;height:${sz}px;border-radius:50%;background:${t.color}22;border:1.5px solid ${t.color};display:inline-flex;align-items:center;justify-content:center;font-size:${sz*.33}px;font-weight:800;color:${t.color};flex-shrink:0">${ini(t.nama)}</span>`;}
+function pAvt(p,sz){sz=sz||34;if(p&&p.photo)return`<img src="${p.photo}" style="width:${sz}px;height:${sz}px;border-radius:50%;object-fit:cover;flex-shrink:0">`;const t=p?gT(p.teamId):null;return`<span style="width:${sz}px;height:${sz}px;border-radius:50%;background:${t?t.color+'22':'#222'};border:1.5px solid ${t?t.color:'#333'};display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">👤</span>`;}
+function cAvt(pt,sz){sz=sz||34;if(pt&&pt.photo)return`<img src="${pt.photo}" style="width:${sz}px;height:${sz}px;border-radius:50%;object-fit:cover;flex-shrink:0">`;const t=pt?gT(pt.teamId):null;return`<span style="width:${sz}px;height:${sz}px;border-radius:50%;background:${t?t.color+'22':'#222'};border:1.5px solid ${t?t.color:'#333'};display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">🎽</span>`;}
+function showMsg(id){const e=document.getElementById(id);if(e){e.style.display='block';setTimeout(()=>e.style.display='none',2200);}}
+function fmtD(d){if(!d)return'';try{const dt=new Date(d+'T00:00:00');if(isNaN(dt))return'';return dt.toLocaleDateString('id-ID',{day:'2-digit',month:'short'});}catch(e){return'';}}
+function fmtDF(d){if(!d)return'-';try{const dt=new Date(d+'T00:00:00');if(isNaN(dt))return'-';return dt.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});}catch(e){return'-';}}
+function ago(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return s+'d';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'j';return Math.floor(s/86400)+'h '+' lalu';}
+function ligaStatus(l){const now=new Date();const s=l.ds?new Date(l.ds+'T00:00:00'):null;const e=l.de?new Date(l.de+'T23:59:59'):null;if(!s&&!e)return{lbl:'❔',cls:'background:rgba(100,116,139,.15);color:#94a3b8'};if(s&&now<s)return{lbl:'🔜 Akan Datang',cls:'background:rgba(59,130,246,.12);color:#60a5fa'};if(e&&now>e)return{lbl:'✅ Selesai',cls:'background:rgba(100,116,139,.12);color:#94a3b8'};return{lbl:'🟢 Berlangsung',cls:'background:rgba(16,185,129,.12);color:#10b981'};}
+function ligaProg(l){if(!l.ds||!l.de)return -1;const s=new Date(l.ds+'T00:00:00'),e=new Date(l.de+'T23:59:59'),now=new Date();if(now<=s)return 0;if(now>=e)return 100;return Math.round((now-s)/(e-s)*100);}
+function sisBadge(liga){const s=SIS[liga?.sistem];if(!s)return'';return`<span class="sbadge" style="background:${s.color}15;color:${s.color};border-color:${s.color}30">${s.label}</span>`;}
+function calcK(lid){
+  const liga=gL(lid);if(liga?.sistem==='gugur')return[];
+  const teams=D.teams.filter(t=>t.ligaId===lid);
+  const done=D.matches.filter(m=>m.ligaId===lid&&m.status==='done'&&isLigaFase(m.fase));
+  return teams.map(t=>{
+    let M=0,W=0,Dr=0,L=0,GF=0,GA=0;
+    done.forEach(m=>{if(m.homeId!==t.id&&m.awayId!==t.id)return;M++;const h=m.homeId===t.id;const gs=h?m.scoreH:m.scoreA,gc=h?m.scoreA:m.scoreH;GF+=gs;GA+=gc;if(gs>gc)W++;else if(gs===gc)Dr++;else L++;});
+    return{...t,M,W,D:Dr,L,GF,GA,GD:GF-GA,Pts:W*3+Dr};
+  }).sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD||b.GF-a.GF||a.nama.localeCompare(b.nama));
+}
+function posC(pos){const m={Penyerang:'pp',Gelandang:'gp',Bertahan:'dp',Kiper:'kp',Pivot:'pvp',Flank:'fp'};return m[pos]||'gp';}
+function posI(pos){const m={Penyerang:'⚡',Gelandang:'🔵',Bertahan:'🛡️',Kiper:'🧤',Pivot:'🎯',Flank:'🔀'};return m[pos]||'▪️';}
+
+// ========== NAVIGATION ==========
+let _curLiga=null,jF='all',kLig=null,jLig=null,pLig=null,tLig=null,bCat='all',pTab='pemain',luLig=null,luTeam=null;
+function goPage(p){
+  if(p==='admin'&&!SEC.ok()){showLogin();return;}
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  const pg=document.getElementById('page-'+p);if(!pg)return;pg.classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
+  const tab=document.querySelector('.nav-tab[data-page="'+p+'"]');if(tab)tab.classList.add('active');
+  const fn={home:renderHome,liga:()=>renderLiga(_curLiga),tim:renderTim,klasemen:renderKlasemen,jadwal:renderJadwal,pemain:renderPemain,lineup:renderLineup,berita:renderBerita,admin:renderAdmin};
+  if(fn[p])fn[p]();
+}
+function setPTab(tab,el){pTab=tab;['pemain','pelatih','official'].forEach(t=>{const e=document.getElementById('ptab-'+t);if(e)e.classList.remove('active');});el.classList.add('active');renderPemain();}
+
+// ========== LIGA PAGE ==========
+function renderLiga(selId){
+  _curLiga=selId||null;
+  const grid=document.getElementById('liga-grid');const det=document.getElementById('liga-detail');
+  if(!grid||!det)return;
+  if(!D.ligas.length){grid.innerHTML='<p style="color:var(--muted)">Belum ada liga.</p>';det.innerHTML='';return;}
+  grid.innerHTML=D.ligas.map(l=>{
+    const st=ligaStatus(l);const prog=ligaProg(l);const teams=D.teams.filter(t=>t.ligaId===l.id);
+    const ms=D.matches.filter(m=>m.ligaId===l.id);const lv=ms.filter(m=>m.status==='live').length;const isSel=selId===l.id;
+    const s=SIS[l.sistem];const logo=l.photo?`<img src="${l.photo}" style="width:54px;height:54px;border-radius:12px;object-fit:cover;border:2px solid ${isSel?'var(--accent)':'var(--border)'};flex-shrink:0">`:`<div style="width:54px;height:54px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;background:rgba(255,255,255,.04);border:2px solid ${isSel?'var(--accent)':'var(--border)'};flex-shrink:0">${l.sport.split(' ')[0]}</div>`;
+    return`<div class="lcard ${isSel?'sel':''}" onclick="selLiga(${l.id})">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">${logo}<div style="flex:1;min-width:0"><div style="font-weight:800;font-size:14px;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.nama}</div><div style="display:flex;gap:4px;flex-wrap:wrap"><span style="padding:2px 9px;border-radius:18px;font-size:10px;font-weight:700;${st.cls}">${st.lbl}</span>${s?`<span class="sbadge" style="background:${s.color}15;color:${s.color};border-color:${s.color}30">${s.label}</span>`:''}</div></div></div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.9">${l.sport} · Musim <strong style="color:var(--text)">${l.musim||'-'}</strong>${l.ds?`<br>📅 ${fmtDF(l.ds)} – ${fmtDF(l.de)||'?'}`:''}</div>
+      ${prog>=0?`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px"><span>Progress</span><span style="font-weight:700;color:var(--accent)">${prog}%</span></div><div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden"><div style="height:100%;width:${prog}%;background:linear-gradient(90deg,var(--accent),#ff6b6b);border-radius:4px"></div></div></div>`:''}
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><span style="padding:3px 10px;border-radius:18px;font-size:10px;font-weight:700;background:rgba(255,255,255,.05);color:var(--muted)">🛡️ ${teams.length}</span><span style="padding:3px 10px;border-radius:18px;font-size:10px;font-weight:700;background:rgba(255,255,255,.05);color:var(--muted)">⚽ ${ms.filter(m=>m.status==='done').length}/${ms.length}</span>${lv?`<span style="padding:3px 10px;border-radius:18px;font-size:10px;font-weight:700;background:rgba(239,68,68,.12);color:#ef4444"><span class="ldot" style="width:5px;height:5px"></span>${lv} Live</span>`:''}</div>
+    </div>`;
+  }).join('');
+  if(!selId){det.innerHTML='';return;}
+  const l=gL(selId);if(!l){det.innerHTML='';return;}
+  const st=ligaStatus(l);const prog=ligaProg(l);const teams=D.teams.filter(t=>t.ligaId===l.id);
+  const allMs=D.matches.filter(m=>m.ligaId===l.id);const liveMs=allMs.filter(m=>m.status==='live');
+  const ups=allMs.filter(m=>m.status==='upcoming').sort((a,b)=>new Date(a.date+' '+a.time)-new Date(b.date+' '+b.time));
+  const players=D.players.filter(p=>teams.some(t=>t.id===p.teamId));const top=[...players].sort((a,b)=>b.gol-a.gol).slice(0,5);const mx=top[0]?.gol||1;
+  const k=calcK(selId);const s=SIS[l.sistem];
+  const logo=l.photo?`<img src="${l.photo}" style="width:80px;height:80px;border-radius:16px;object-fit:cover;border:2px solid var(--accent);flex-shrink:0">`:`<div style="width:80px;height:80px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:38px;background:rgba(230,57,70,.08);border:2px solid rgba(230,57,70,.2);flex-shrink:0">${l.sport.split(' ')[0]}</div>`;
+  const ktRows=k.length?k.map((t,i)=>{const rc=i===0?'rg':i===1?'rs':i===2?'rb':'rn';const rc2=i===0?'r1b':i===1?'r2b':i===2?'r3b':(i>=k.length-2&&k.length>4?'rel':'');const gdS=t.GD>0?'+':'';const gdC=t.GD>0?'gdp':t.GD<0?'gdn':'';return`<div class="kt-row ${rc2}" onclick="openTeamD(${t.id})"><span style="display:flex;justify-content:center"><div class="rnk ${rc}">${i+1}</div></span><span class="tcell">${tAvt(t,22)}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px">${t.nama}</span></span><span style="font-weight:600;color:var(--text)">${t.M}</span><span style="color:var(--green);font-weight:700">${t.W}</span><span style="color:var(--yellow)">${t.D}</span><span style="color:var(--red)">${t.L}</span><span style="color:var(--text)">${t.GF}</span><span>${t.GA}</span><span class="${gdC}">${gdS}${t.GD}</span><span style="display:flex;justify-content:center"><div style="background:var(--accent);border-radius:7px;padding:4px 10px;font-weight:900;font-size:13px;color:#fff;min-width:32px;text-align:center">${t.Pts}</div></span></div>`;}).join(''):`<div class="luempty">${l.sistem==='gugur'?'⚔️ Sistem gugur tidak pakai klasemen poin':'Belum ada data'}</div>`;
+  det.innerHTML=`<div class="ldetail">
+    <div style="background:linear-gradient(135deg,#0f1629,#1a0a1a);padding:24px;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;border-bottom:1px solid rgba(230,57,70,.15)">${logo}
+      <div style="flex:1;min-width:200px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><div style="font-size:22px;font-weight:900">${l.nama}</div><span style="padding:3px 12px;border-radius:18px;font-size:11px;font-weight:700;${st.cls}">${st.lbl}</span></div>
+        <div style="display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap">${sisBadge(l)}</div>
+        ${s?`<div style="font-size:11px;color:var(--muted);background:${s.color}0a;border:1px solid ${s.color}20;border-radius:8px;padding:7px 10px;margin-bottom:8px;max-width:380px">${s.desc}</div>`:''}
+        <div style="font-size:11px;color:var(--muted)">${l.sport} · Musim <strong style="color:var(--text)">${l.musim}</strong>${l.ds?`<br>📅 ${fmtDF(l.ds)} – ${fmtDF(l.de)||'?'}`:''}</div>
+        ${prog>=0?`<div style="max-width:300px;margin-top:10px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:5px"><span>Progress</span><span style="font-weight:700;color:var(--accent)">${prog}%</span></div><div style="height:6px;background:var(--border);border-radius:4px;overflow:hidden"><div style="height:100%;width:${prog}%;background:linear-gradient(90deg,var(--accent),#ff6b6b);border-radius:4px"></div></div></div>`:''}
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:12px 16px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--accent)">${teams.length}</div><div style="font-size:10px;color:var(--muted)">Tim</div></div>
+        <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:12px 16px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--green)">${players.length}</div><div style="font-size:10px;color:var(--muted)">Pemain</div></div>
+        <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:12px 16px;text-align:center"><div style="font-size:22px;font-weight:900">${allMs.length}</div><div style="font-size:10px;color:var(--muted)">Match</div></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:16px;padding:18px">
+      <div>
+        ${liveMs.length?`<div class="section-header"><div class="section-title"><span class="ldot"></span>Live</div></div>${liveMs.map(m=>mCard(m)).join('')}`:''}
+        ${l.sistem==='gugur'?'<div style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:12px;padding:14px;font-size:12px;color:var(--muted)">⚔️ Sistem gugur — klasemen poin tidak digunakan.</div>':
+        `<div class="section-header" style="margin-top:${liveMs.length?12:0}px"><div class="section-title">📊 Klasemen</div><span class="section-link" onclick="goPage('klasemen')">Lengkap →</span></div>
+        <div class="kt-wrap"><div class="kt-head"><span>#</span><span style="text-align:left;padding-left:4px">Tim</span><span>M</span><span style="color:var(--green)">W</span><span style="color:var(--yellow)">D</span><span style="color:var(--red)">L</span><span>GF</span><span>GA</span><span>GD</span><span>Pts</span></div>${ktRows}</div>`}
+        ${ups.length?`<div class="section-header" style="margin-top:14px"><div class="section-title">📅 Mendatang</div><span class="section-link" onclick="goPage('jadwal')">Semua →</span></div>${ups.slice(0,3).map(m=>mCard(m)).join('')}`:''}
+      </div>
+      <div>
+        <div class="widget"><div class="wt">⚽ Top Skor</div>${top.map((p,i)=>{const t=gT(p.teamId);return`<div class="srow" style="cursor:pointer" onclick="openPlayerD(${p.id})"><span style="min-width:20px;text-align:center">${['🥇','🥈','🥉'][i]||i+1}</span>${pAvt(p,26)}<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:11px">${p.nama}</div><div style="font-size:10px;color:var(--muted)">${t?.nama||'-'}</div><div class="gbar"><div class="gfill" style="width:${p.gol/mx*100}%"></div></div></div><span style="font-size:15px;font-weight:900;color:var(--accent)">${p.gol}</span></div>`;}).join('')||'<p style="color:var(--muted);font-size:11px">Belum ada.</p>'}</div>
+        <div class="widget"><div class="wt">🛡️ Tim (${teams.length})</div>${teams.map(t=>`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(42,42,42,.6);cursor:pointer" onclick="openTeamD(${t.id})">${tAvt(t,28)}<div style="flex:1"><div style="font-weight:600;font-size:12px">${t.nama}</div><div style="font-size:10px;color:var(--muted)">📍 ${t.kota}</div></div></div>`).join('')||'<p style="color:var(--muted);font-size:11px">Belum ada tim.</p>'}</div>
+      </div>
+    </div>
+  </div>`;
+}
+function selLiga(id){_curLiga=(_curLiga===id)?null:id;renderLiga(_curLiga);if(_curLiga)setTimeout(()=>document.getElementById('liga-detail')?.scrollIntoView({behavior:'smooth',block:'start'}),100);}
+
+// ========== MATCH DETAIL ==========
+function openMatchD(id){
+  const m=gM(id);if(!m)return;
+  const home=gT(m.homeId),away=gT(m.awayId),liga=gL(m.ligaId);
+  const evs=(D.evs[m.id]||[]).slice().sort((a,b)=>a.menit-b.menit);
+  const tl={goal:'⚽ Gol',assist:'🎯 Assist',yellow:'🟡 K.Kuning',red:'🔴 K.Merah'};
+  const tc={goal:'tg2',assist:'tas',yellow:'tyw',red:'trd'};
+  const ti={goal:'⚽',assist:'🎯',yellow:'🟡',red:'🔴'};
+  const tlHTML=evs.length?evs.map(ev=>{const p=gP(ev.pid);const t=p?gT(p.teamId):null;return`<div class="tli"><span class="tlm">${ev.menit}'</span><div class="tlic ${tc[ev.type]||'tg2'}">${ti[ev.type]||'⚽'}</div><div style="flex:1"><div style="font-weight:700">${pAvt(p,18)}<span style="margin-left:5px">${p?p.nama:'?'}</span><span style="font-size:9px;padding:1px 6px;border-radius:4px;background:${t?t.color+'22':'#222'};color:${t?t.color:'#888'};margin-left:5px">${t?.nama||'-'}</span></div><div style="color:var(--muted);font-size:10px">${tl[ev.type]||ev.type}</div></div></div>`;}).join(''):'<p style="color:var(--muted);font-size:11px;text-align:center;padding:20px">Belum ada event.</p>';
+  const hC=m.scoreH>m.scoreA?'var(--green)':m.scoreH<m.scoreA?'var(--red)':'var(--text)';const aC=m.scoreA>m.scoreH?'var(--green)':m.scoreA<m.scoreH?'var(--red)':'var(--text)';
+  const badge=m.status==='live'?'<span class="mbadge badge-live">🔴 LIVE</span>':m.status==='done'?'<span class="mbadge badge-done">✅ Selesai</span>':`<span class="mbadge badge-up">📅 Mendatang</span>`;
+  const fasePill=m.fase?`<span class="fase-pill">${m.fase}</span>`:'';
+  document.getElementById('detail-content').innerHTML=`
+    <div class="mds"><div style="margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap">${badge}${fasePill}<span style="font-size:11px;color:var(--muted)">${liga?.nama||''} · ${m.venue||''} · ${fmtD(m.date)} ${m.time}</span></div>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;max-width:460px;margin:0 auto">
+        <div style="text-align:right">${tAvt(home,48)}<div style="font-weight:800;font-size:14px;margin-top:7px">${home?.nama||'?'}</div></div>
+        ${m.status!=='upcoming'?`<div class="msb"><span style="color:${hC}">${m.scoreH}</span><span style="font-size:24px;color:var(--muted)">:</span><span style="color:${aC}">${m.scoreA}</span></div>`:`<div style="font-size:22px;font-weight:900;color:var(--muted)">VS</div>`}
+        <div style="text-align:left">${tAvt(away,48)}<div style="font-weight:800;font-size:14px;margin-top:7px">${away?.nama||'?'}</div></div>
+      </div>
+    </div>
+    <div style="padding:10px 20px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--muted)">⏱️ Timeline</div>
+    <div class="mdc">${tlHTML}</div>`;
+  document.getElementById('mo-detail').classList.add('show');
+}
+function mCard(m){
+  const home=gT(m.homeId),away=gT(m.awayId),liga=gL(m.ligaId);
+  const badge=m.status==='live'?'<span class="mbadge badge-live">🔴 LIVE</span>':m.status==='done'?'<span class="mbadge badge-done">✅ Selesai</span>':`<span class="mbadge badge-up">📅 ${fmtD(m.date)}</span>`;
+  const fp=m.fase?`<span class="fase-pill">${m.fase}</span>`:'';
+  const score=m.status!=='upcoming'?`<div style="display:flex;align-items:center;gap:6px;font-size:20px;font-weight:900"><span style="color:${m.scoreH>m.scoreA?'var(--green)':m.scoreH<m.scoreA?'var(--red)':'var(--text)'}">${m.scoreH}</span><span style="font-size:10px;color:var(--muted)">:</span><span style="color:${m.scoreA>m.scoreH?'var(--green)':m.scoreA<m.scoreH?'var(--red)':'var(--text)'}">${m.scoreA}</span></div>`:`<div style="font-size:12px;color:var(--muted);font-weight:700">${m.time}</div>`;
+  return`<div class="match-card" onclick="openMatchD(${m.id})"><div style="display:flex;align-items:center;gap:4px;margin-bottom:7px;flex-wrap:wrap">${badge}${fp}<span style="margin-left:auto;font-size:10px;color:var(--muted)">${liga?.nama||''} · ${m.venue||''}</span></div><div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px"><div style="display:flex;align-items:center;gap:5px;justify-content:flex-end">${tAvt(home,24)}<span style="font-weight:700;font-size:12px">${home?.nama||'?'}</span></div>${score}<div style="display:flex;align-items:center;gap:5px"><span style="font-weight:700;font-size:12px">${away?.nama||'?'}</span>${tAvt(away,24)}</div></div></div>`;
+}
+
+// ========== TEAM & PLAYER DETAIL ==========
+function openTeamD(id){
+  const t=gT(id);if(!t)return;const liga=gL(t.ligaId);const k=calcK(t.ligaId);const rank=k.findIndex(x=>x.id===t.id)+1;
+  const ts=k.find(x=>x.id===t.id)||{M:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0};
+  const players=D.players.filter(p=>p.teamId===t.id);
+  const ph=t.photo?`<img src="${t.photo}" class="dpho">`:`<div class="dphp" style="background:${t.color}22;border-color:${t.color};color:${t.color}">${ini(t.nama)}</div>`;
+  document.getElementById('detail-content').innerHTML=`<div class="dh">${ph}<div style="flex:1"><div class="dn">${t.nama}</div><div class="ds">📍 ${t.kota} · ${liga?.nama||'-'} ${sisBadge(liga)}</div><div class="dtags"><span class="dtag">#${rank||'-'}</span><span class="dtag">${ts.Pts} Poin</span><span class="dtag">${players.length} Pemain</span></div></div></div>
+    <div class="db"><div class="sr"><div class="sb"><div class="sbv">${ts.M}</div><div class="sbl">M</div></div><div class="sb"><div class="sbv" style="color:var(--green)">${ts.W}</div><div class="sbl">W</div></div><div class="sb"><div class="sbv" style="color:var(--yellow)">${ts.D}</div><div class="sbl">D</div></div><div class="sb"><div class="sbv" style="color:var(--red)">${ts.L}</div><div class="sbl">L</div></div></div>
+    ${players.length?`<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)">👥 Skuad</div>${players.map(p=>`<div class="pir" onclick="closeMo('mo-detail');setTimeout(()=>openPlayerD(${p.id}),200)">${pAvt(p,28)}<span style="min-width:22px;font-size:10px;color:var(--muted)">#${p.no||'?'}</span><div style="flex:1"><div style="font-weight:600">${p.nama}</div><div style="font-size:10px;color:var(--muted)">${p.pos}</div></div><span style="font-size:10px;color:var(--muted)">⚽${p.gol} 🎯${p.assist}</span></div>`).join('')}</div>`:''}</div>`;
+  document.getElementById('mo-detail').classList.add('show');
+}
+function openPlayerD(id){
+  const p=gP(id);if(!p)return;const t=gT(p.teamId),liga=t?gL(t.ligaId):null;
+  const yk=D.kartu.filter(k=>k.playerId===p.id&&k.type==='yellow').length;const km=p.km||0;
+  const ph=p.photo?`<img src="${p.photo}" class="dpho">`:`<div class="dphp" style="background:${t?t.color+'22':'#222'};border-color:${t?t.color:'var(--border)'}">👤</div>`;
+  document.getElementById('detail-content').innerHTML=`<div class="dh">${ph}<div style="flex:1"><div class="dn">${p.nama}</div><div class="ds" style="display:flex;align-items:center;gap:5px">${tAvt(t,14)}<span>${t?t.nama:'-'} · ${liga?.nama||'-'}</span></div><div class="dtags"><span class="dtag">#${p.no||'?'}</span><span class="dtag">${p.pos}</span><span class="dtag">${p.usia}th</span>${yk?`<span class="dtag" style="background:rgba(245,158,11,.12);color:#f59e0b">🟡${yk}</span>`:''}${km?`<span class="dtag" style="background:rgba(239,68,68,.12);color:#ef4444">🔴${km}</span>`:''}</div></div></div>
+    <div class="db"><div class="sr"><div class="sb"><div class="sbv">${p.gol}</div><div class="sbl">⚽ Gol</div></div><div class="sb"><div class="sbv">${p.assist}</div><div class="sbl">🎯 Assist</div></div><div class="sb"><div class="sbv">${p.gol+p.assist}</div><div class="sbl">Kontribusi</div></div><div class="sb"><div class="sbv">${yk+km}</div><div class="sbl">Kartu</div></div></div>
+    ${p.nisn?`<div style="display:flex;align-items:center;gap:9px;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:12px"><span style="font-size:18px">🪪</span><div><div style="font-size:10px;color:var(--muted);font-weight:700">NISN/No. Identitas</div><div style="font-size:14px;font-weight:800;color:var(--accent)">${p.nisn}</div></div></div>`:''}
+    ${p.tinggi?`<div style="font-size:11px;color:var(--muted)">📏 Tinggi: <strong style="color:var(--text)">${p.tinggi} cm</strong></div>`:''}
+    </div>`;
+  document.getElementById('mo-detail').classList.add('show');
+}
+
+// ========== RENDER HOME ==========
+function renderHome(){
+  const live=D.matches.filter(m=>m.status==='live');
+  document.getElementById('live-cnt').textContent=live.length;
+  [['hs-l',D.ligas.length],['hs-t',D.teams.length],['hs-p',D.players.length],['hs-m',D.matches.length]].forEach(([id,v])=>document.getElementById(id).textContent=v);
+  document.getElementById('home-matches').innerHTML=[...D.matches].filter(m=>m.status==='live'||m.status==='done').slice(0,4).map(mCard).join('')||'<p style="color:var(--muted);font-size:12px">Belum ada.</p>';
+  const top=[...D.players].sort((a,b)=>b.gol-a.gol).slice(0,5);const mx=top[0]?.gol||1;
+  document.getElementById('top-scorer').innerHTML=top.map((p,i)=>{const t=gT(p.teamId);return`<div class="srow" style="cursor:pointer" onclick="openPlayerD(${p.id})"><span style="font-size:14px;min-width:22px;text-align:center">${['🥇','🥈','🥉'][i]||i+1}</span>${pAvt(p,28)}<div style="flex:1"><div style="font-weight:700;font-size:12px">${p.nama}</div><div style="font-size:10px;color:var(--muted)">${t?.nama||'-'}</div><div class="gbar"><div class="gfill" style="width:${p.gol/mx*100}%"></div></div></div><span style="font-size:16px;font-weight:900;color:var(--accent)">${p.gol}</span></div>`;}).join('')||'<p style="color:var(--muted)">Belum ada.</p>';
+  document.getElementById('home-berita').innerHTML=[...D.berita].sort((a,b)=>b.ts-a.ts).slice(0,3).map(nCard).join('');
+  const ups=[...D.matches].filter(m=>m.status==='upcoming').sort((a,b)=>new Date(a.date+' '+a.time)-new Date(b.date+' '+b.time)).slice(0,4);
+  document.getElementById('upw').innerHTML=ups.map(m=>{const h=gT(m.homeId),a=gT(m.awayId);return`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(42,42,42,.6);cursor:pointer" onclick="openMatchD(${m.id})">${tAvt(h,20)}<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h?.nama||'?'} vs ${a?.nama||'?'}</div><div style="font-size:10px;color:var(--muted)">${fmtD(m.date)} · ${m.time}${m.fase?' · '+m.fase:''}</div></div>${tAvt(a,20)}</div>`;}).join('')||'<p style="color:var(--muted);font-size:11px">Belum ada.</p>';
+  if(D.ligas.length){const k=calcK(D.ligas[0].id).slice(0,5);document.getElementById('minik').innerHTML='<div style="font-size:10px;color:var(--muted);margin-bottom:6px">'+D.ligas[0].nama+'</div>'+(k.length?k.map((t,i)=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(42,42,42,.5);cursor:pointer" onclick="openTeamD(${t.id})"><span style="font-size:10px;font-weight:800;min-width:14px;color:var(--muted)">${i+1}</span>${tAvt(t,18)}<span style="font-size:11px;font-weight:600;flex:1">${t.nama}</span><span style="font-size:12px;font-weight:800;color:var(--accent)">${t.Pts}</span></div>`).join(''):'<p style="font-size:11px;color:var(--muted)">Sistem gugur.</p>');}
+  document.getElementById('disw').innerHTML=[...D.kartu].reverse().slice(0,5).map(k=>{const p=gP(k.playerId);return`<div style="display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid rgba(42,42,42,.5)"><span style="font-size:14px">${k.type==='yellow'?'🟡':'🔴'}</span><div style="flex:1"><div style="font-size:11px;font-weight:600">${p?.nama||'?'}</div><div style="font-size:10px;color:var(--muted)">Menit ${k.menit}'</div></div></div>`;}).join('')||'<p style="color:var(--muted);font-size:11px">Belum ada.</p>';
+}
+
+// ========== OTHER PAGES ==========
+function renderTim(){
+  document.getElementById('tim-tabs').innerHTML='<div class="tab '+(tLig===null?'active':'')+'" onclick="tLig=null;renderTim()">Semua</div>'+D.ligas.map(l=>`<div class="tab ${l.id===tLig?'active':''}" onclick="tLig=${l.id};renderTim()">${l.sport.split(' ')[0]} ${l.nama}</div>`).join('');
+  const teams=tLig?D.teams.filter(t=>t.ligaId===tLig):D.teams;
+  document.getElementById('team-grid').innerHTML=teams.length?teams.map(t=>{const ks=calcK(t.ligaId).find(x=>x.id===t.id)||{M:0,W:0,Pts:0};return`<div class="tc" onclick="openTeamD(${t.id})">${t.photo?`<img src="${t.photo}" style="width:70px;height:70px;border-radius:50%;object-fit:cover;margin:0 auto 9px;border:2px solid ${t.color};display:block">`:`<div style="width:70px;height:70px;border-radius:50%;margin:0 auto 9px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;background:${t.color}22;border:2px solid ${t.color};color:${t.color}">${ini(t.nama)}</div>`}<div style="font-weight:800;font-size:13px;margin-bottom:2px">${t.nama}</div><div style="font-size:10px;color:var(--muted);margin-bottom:9px">📍 ${t.kota}</div><div style="display:flex;justify-content:space-around;padding-top:9px;border-top:1px solid var(--border)"><div><div style="font-size:15px;font-weight:800;color:var(--accent)">${ks.Pts}</div><div style="font-size:9px;color:var(--muted)">Poin</div></div><div><div style="font-size:15px;font-weight:800;color:var(--green)">${ks.W}</div><div style="font-size:9px;color:var(--muted)">Menang</div></div><div><div style="font-size:15px;font-weight:800">${D.players.filter(p=>p.teamId===t.id).length}</div><div style="font-size:9px;color:var(--muted)">Pemain</div></div></div></div>`;}).join(''):'<p style="color:var(--muted);grid-column:1/-1">Belum ada tim.</p>';
+}
+function renderKlasemen(){
+  if(!kLig&&D.ligas.length)kLig=D.ligas[0].id;
+  document.getElementById('klas-tabs').innerHTML=D.ligas.map(l=>`<div class="tab ${l.id===kLig?'active':''}" onclick="kLig=${l.id};renderKlasemen()">${l.sport.split(' ')[0]} ${l.nama}</div>`).join('');
+  if(!kLig)return;
+  const k=calcK(kLig);const liga=gL(kLig);const s=SIS[liga?.sistem];
+  if(liga?.sistem==='gugur'){document.getElementById('klas-content').innerHTML=`<div style="background:var(--card);border:1px solid rgba(239,68,68,.2);border-radius:18px;padding:32px;text-align:center"><div style="font-size:40px;margin-bottom:12px">⚔️</div><div style="font-size:18px;font-weight:800;margin-bottom:8px">Sistem Gugur</div><p style="color:var(--muted);font-size:13px">Klasemen poin tidak berlaku untuk sistem gugur.<br>Lihat halaman Jadwal untuk bracket pertandingan.</p></div>`;return;}
+  const tG=k.reduce((a,t)=>a+t.GF,0),tM=Math.floor(k.reduce((a,t)=>a+t.M,0)/2),leader=k[0];
+  const siInfo=s?`<div style="background:${s.color}0a;border:1px solid ${s.color}25;border-radius:12px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px"><span style="font-size:20px">${s.label.split(' ')[0]}</span><div><div style="font-weight:700;font-size:12px;color:${s.color}">${s.label}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${s.desc}</div></div></div>`:'';
+  const smr=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px"><span style="font-size:20px">⚽</span><div><div style="font-size:20px;font-weight:900">${tG}</div><div style="font-size:10px;color:var(--muted)">Total Gol</div></div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px"><span style="font-size:20px">🏟️</span><div><div style="font-size:20px;font-weight:900">${tM}</div><div style="font-size:10px;color:var(--muted)">Pertandingan</div></div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px">${tAvt(leader,34)}<div><div style="font-size:12px;font-weight:800">${leader?.nama||'-'}</div><div style="font-size:10px;color:var(--yellow)">🥇 ${leader?.Pts||0} poin</div></div></div></div>`;
+  const rows=k.map((t,i)=>{const rc=i===0?'rg':i===1?'rs':i===2?'rb':'rn';const rc2=i===0?'r1b':i===1?'r2b':i===2?'r3b':(i>=k.length-2&&k.length>4?'rel':'');const gdS=t.GD>0?'+':'';const gdC=t.GD>0?'gdp':t.GD<0?'gdn':'';return`<div class="kt-row ${rc2}" onclick="openTeamD(${t.id})" style="animation:rowIn .3s ease ${i*.05}s both"><span style="display:flex;justify-content:center"><div class="rnk ${rc}">${i+1}</div></span><span class="tcell">${tAvt(t,22)}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px">${t.nama}</span></span><span style="font-weight:600;color:var(--text)">${t.M}</span><span style="color:var(--green);font-weight:700">${t.W}</span><span style="color:var(--yellow)">${t.D}</span><span style="color:var(--red)">${t.L}</span><span style="color:var(--text)">${t.GF}</span><span>${t.GA}</span><span class="${gdC}">${gdS}${t.GD}</span><span style="display:flex;justify-content:center"><div style="background:var(--accent);border-radius:7px;padding:4px 10px;font-weight:900;font-size:13px;color:#fff;min-width:32px;text-align:center">${t.Pts}</div></span></div>`;}).join('');
+  document.getElementById('klas-content').innerHTML=siInfo+smr+`<div class="kt-wrap"><div class="kt-topbar"><div style="font-size:13px;font-weight:800;display:flex;align-items:center;gap:7px"><span class="ldot"></span>${liga?.nama||''}</div>${sisBadge(liga)}</div><div class="kt-head"><span>#</span><span style="text-align:left;padding-left:4px">Tim</span><span>M</span><span style="color:var(--green)">W</span><span style="color:var(--yellow)">D</span><span style="color:var(--red)">L</span><span>GF</span><span>GA</span><span>GD</span><span>Pts</span></div>${rows}</div>`;
+}
+function setJF(f,el){jF=f;document.querySelectorAll('#page-jadwal .tabs + div .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderJadwal();}
+function renderJadwal(){
+  if(!jLig&&D.ligas.length)jLig=D.ligas[0].id;
+  document.getElementById('jad-tabs').innerHTML=D.ligas.map(l=>`<div class="tab ${l.id===jLig?'active':''}" onclick="jLig=${l.id};renderJadwal()">${l.sport.split(' ')[0]} ${l.nama}</div>`).join('');
+  let ms=D.matches.filter(m=>m.ligaId===jLig);if(jF!=='all')ms=ms.filter(m=>m.status===jF);
+  ms=[...ms].sort((a,b)=>new Date(a.date+' '+a.time)-new Date(b.date+' '+b.time));
+  const el=document.getElementById('jad-list');if(!ms.length){el.innerHTML='<p style="color:var(--muted)">Tidak ada pertandingan.</p>';return;}
+  const fm={};ms.forEach(m=>{const f=m.fase||'Liga';if(!fm[f])fm[f]=[];fm[f].push(m);});
+  const liga=gL(jLig);const s=SIS[liga?.sistem];
+  let html=s&&Object.keys(fm).length>1?`<div style="background:${s.color}0a;border:1px solid ${s.color}25;border-radius:10px;padding:9px 14px;margin-bottom:12px;font-size:11px"><strong style="color:${s.color}">${s.label}</strong> — ${s.desc}</div>`:'';
+  Object.keys(fm).forEach(fase=>{
+    const fc=isLigaFase(fase)?'#10b981':'#f59e0b';
+    if(Object.keys(fm).length>1)html+=`<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;margin-bottom:8px;background:${fc}0f;border-radius:9px;border-left:3px solid ${fc}"><span style="font-size:12px;font-weight:800;color:${fc}">${fase}</span><span style="font-size:10px;color:var(--muted)">${fm[fase].length} pertandingan</span></div>`;
+    html+=fm[fase].map(mCard).join('');
+  });
+  el.innerHTML=html;
+}
+function renderPemain(){
+  document.getElementById('pem-tabs').innerHTML='<div class="tab '+(pLig===null?'active':'')+'" onclick="pLig=null;renderPemain()">Semua</div>'+D.ligas.map(l=>`<div class="tab ${l.id===pLig?'active':''}" onclick="pLig=${l.id};renderPemain()">${l.sport.split(' ')[0]} ${l.nama}</div>`).join('');
+  const q=(document.getElementById('sp')?.value||'').toLowerCase();
+  const tids=pLig?D.teams.filter(t=>t.ligaId===pLig).map(t=>t.id):null;
+  const grid=document.getElementById('pem-grid');
+  if(pTab==='pemain'){
+    let ps=D.players.filter(p=>p.nama.toLowerCase().includes(q));if(tids)ps=ps.filter(p=>tids.includes(p.teamId));
+    grid.innerHTML=ps.length?ps.map(p=>{const t=gT(p.teamId);const yk=D.kartu.filter(k=>k.playerId===p.id&&k.type==='yellow').length,km=D.kartu.filter(k=>k.playerId===p.id&&k.type==='red').length;return`<div class="pc" onclick="openPlayerD(${p.id})">${p.photo?`<img src="${p.photo}" style="width:68px;height:68px;border-radius:50%;object-fit:cover;margin:0 auto 9px;display:block;border:2px solid ${t?.color||'var(--border)'}">`:`<div style="width:68px;height:68px;border-radius:50%;margin:0 auto 9px;display:flex;align-items:center;justify-content:center;font-size:28px;background:${t?t.color+'22':'#222'};border:2px solid ${t?t.color:'#333'}">👤</div>`}<div style="font-size:12px;font-weight:700;margin-bottom:2px">${p.nama}</div><div style="display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:2px">${tAvt(t,13)}<span style="font-size:10px;color:var(--muted)">${t?.nama||'-'}</span></div><div style="font-size:10px;color:var(--accent);font-weight:700">#${p.no||'?'} · ${p.pos}</div>${p.nisn?`<div style="font-size:10px;color:var(--muted);margin-top:3px">🪪 ${p.nisn}</div>`:''}${yk||km?`<div style="margin-top:5px;display:flex;gap:4px;justify-content:center">${yk?`<span class="sico yk">🟡${yk}</span>`:''}${km?`<span class="sico km">🔴${km}</span>`:''}</div>`:''}<div style="display:flex;justify-content:space-around;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><div><div style="font-size:13px;font-weight:800;color:var(--accent)">${p.gol}</div><div style="font-size:10px;color:var(--muted)">Gol</div></div><div><div style="font-size:13px;font-weight:800;color:var(--accent)">${p.assist}</div><div style="font-size:10px;color:var(--muted)">Assist</div></div><div><div style="font-size:13px;font-weight:800;color:var(--accent)">${p.usia}</div><div style="font-size:10px;color:var(--muted)">Usia</div></div></div></div>`;}).join(''):'<p style="color:var(--muted);grid-column:1/-1">Tidak ada pemain.</p>';
+  } else if(pTab==='pelatih'){
+    let ps=D.pelatihs.filter(p=>p.nama.toLowerCase().includes(q));if(tids)ps=ps.filter(p=>tids.includes(p.teamId));
+    grid.innerHTML=ps.length?ps.map(pt=>{const t=gT(pt.teamId);return`<div class="pc">${pt.photo?`<img src="${pt.photo}" style="width:68px;height:68px;border-radius:50%;object-fit:cover;margin:0 auto 9px;display:block">`:`<div style="width:68px;height:68px;border-radius:50%;margin:0 auto 9px;display:flex;align-items:center;justify-content:center;font-size:28px;background:${t?t.color+'22':'#222'};border:2px solid ${t?t.color:'#333'}">🎽</div>`}<div style="font-size:12px;font-weight:700;margin-bottom:2px">${pt.nama}</div><div style="display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:2px">${tAvt(t,13)}<span style="font-size:10px;color:var(--muted)">${t?.nama||'-'}</span></div><div style="font-size:10px;color:var(--accent);font-weight:700">${pt.jabatan}</div></div>`;}).join(''):'<p style="color:var(--muted);grid-column:1/-1">Tidak ada pelatih.</p>';
+  } else {
+    let ps=D.officials.filter(o=>o.nama.toLowerCase().includes(q));if(tids)ps=ps.filter(o=>tids.includes(o.teamId));
+    grid.innerHTML=ps.length?ps.map(o=>{const t=gT(o.teamId);return`<div class="pc">${o.photo?`<img src="${o.photo}" style="width:68px;height:68px;border-radius:50%;object-fit:cover;margin:0 auto 9px;display:block">`:`<div style="width:68px;height:68px;border-radius:50%;margin:0 auto 9px;display:flex;align-items:center;justify-content:center;font-size:28px;background:${t?t.color+'22':'#222'};border:2px solid ${t?t.color:'#333'}">📋</div>`}<div style="font-size:12px;font-weight:700;margin-bottom:2px">${o.nama}</div><div style="display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:2px">${tAvt(t,13)}<span style="font-size:10px;color:var(--muted)">${t?.nama||'-'}</span></div><div style="font-size:10px;color:var(--accent);font-weight:700">${o.jabatan}</div></div>`;}).join(''):'<p style="color:var(--muted);grid-column:1/-1">Tidak ada official.</p>';
+  }
+}
+function nCard(b){const lbl={jadwal:'📅 Jadwal',hasil:'✅ Hasil',info:'ℹ️ Info',transfer:'🔄 Transfer'}[b.cat]||b.cat;const cls={jadwal:'cat-jadwal',hasil:'cat-hasil',info:'cat-info',transfer:'cat-transfer'}[b.cat]||'cat-info';return`<div class="nc"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;display:inline-block;margin-bottom:6px" class="${cls}">${lbl}</span><div style="font-size:18px;margin-bottom:4px">${b.emoji||'📰'}</div><div style="font-weight:700;font-size:13px;margin-bottom:4px">${b.judul}</div><p style="font-size:11px;color:var(--muted);line-height:1.6">${b.konten.slice(0,110)}</p><div style="font-size:10px;color:var(--muted);margin-top:5px">${ago(b.ts)}</div></div>`;}
+function renderBerita(){
+  const cats=['all','jadwal','hasil','info','transfer'];const lbl={'all':'Semua','jadwal':'📅 Jadwal','hasil':'✅ Hasil','info':'ℹ️ Info','transfer':'🔄 Transfer'};
+  document.getElementById('ber-tabs').innerHTML=cats.map(c=>`<div class="tab ${bCat===c?'active':''}" onclick="bCat='${c}';renderBerita()">${lbl[c]}</div>`).join('');
+  let bn=[...D.berita].sort((a,b)=>b.ts-a.ts);if(bCat!=='all')bn=bn.filter(b=>b.cat===bCat);
+  const cls2={jadwal:'cat-jadwal',hasil:'cat-hasil',info:'cat-info',transfer:'cat-transfer'};const lbl2={jadwal:'📅 Jadwal',hasil:'✅ Hasil',info:'ℹ️ Info',transfer:'🔄 Transfer'};
+  document.getElementById('ber-list').innerHTML=bn.map(b=>`<div class="nc"><div style="display:flex;gap:12px"><div style="font-size:28px;flex-shrink:0">${b.emoji||'📰'}</div><div style="flex:1"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;display:inline-block;margin-bottom:6px" class="${cls2[b.cat]||'cat-info'}">${lbl2[b.cat]||b.cat}</span><div style="font-weight:700;font-size:13px;margin:4px 0">${b.judul}</div><p style="font-size:11px;color:var(--muted);line-height:1.6">${b.konten}</p><div style="font-size:10px;color:var(--muted);margin-top:5px">${ago(b.ts)}</div></div></div></div>`).join('')||'<p style="color:var(--muted)">Belum ada.</p>';
+  document.getElementById('ber-pop').innerHTML=[...D.berita].sort((a,b)=>b.ts-a.ts).slice(0,3).map(b=>`<div style="padding:7px 0;border-bottom:1px solid rgba(42,42,42,.6)"><div style="font-size:11px;font-weight:700">${b.emoji} ${b.judul}</div><div style="font-size:10px;color:var(--muted)">${ago(b.ts)}</div></div>`).join('');
+  const ups=[...D.matches].filter(m=>m.status==='upcoming').sort((a,b)=>new Date(a.date+' '+a.time)-new Date(b.date+' '+b.time)).slice(0,4);
+  document.getElementById('ber-upw').innerHTML=ups.map(m=>{const h=gT(m.homeId),a=gT(m.awayId);return`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(42,42,42,.6);cursor:pointer" onclick="openMatchD(${m.id})">${tAvt(h,18)}<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h?.nama||'?'} vs ${a?.nama||'?'}</div><div style="font-size:10px;color:var(--muted)">${fmtD(m.date)} · ${m.time}</div></div>${tAvt(a,18)}</div>`;}).join('')||'<p style="color:var(--muted);font-size:11px">Belum ada.</p>';
+}
+
+// ========== LINEUP ==========
+function renderLineup(){
+  if(!luLig&&D.ligas.length)luLig=D.ligas[0].id;
+  document.getElementById('lu-tabs').innerHTML=D.ligas.map(l=>`<div class="tab ${l.id===luLig?'active':''}" onclick="luLig=${l.id};luTeam=null;renderLineup()">${l.sport.split(' ')[0]} ${l.nama}</div>`).join('');
+  const teams=D.teams.filter(t=>t.ligaId===luLig);
+  document.getElementById('lu-teams').innerHTML=teams.map(t=>`<div style="display:flex;align-items:center;gap:10px;background:var(--card);border:2px solid ${luTeam===t.id?'var(--accent)':'var(--border)'};border-radius:14px;padding:12px 16px;cursor:pointer;flex:1;min-width:160px;${luTeam===t.id?'background:rgba(230,57,70,.07)':''}" onclick="luTeam=${t.id};renderLineupMain()">${tAvt(t,36)}<div><div style="font-weight:700;font-size:13px">${t.nama}</div><div style="font-size:10px;color:var(--muted)">📍 ${t.kota}</div></div></div>`).join('')||'<p style="color:var(--muted);font-size:12px">Belum ada tim.</p>';
+  if(luTeam)renderLineupMain();
+  else document.getElementById('lu-main').innerHTML=`<div class="luempty" style="background:var(--card);border:1px solid var(--border);border-radius:18px"><div style="font-size:40px;margin-bottom:10px">📋</div><div>Pilih tim</div></div>`;
+}
+function renderLineupMain(){
+  const t=gT(luTeam);if(!t)return;
+  const lu=D.lineups[luTeam]||{starters:[],cadangan:[]};
+  const starters=lu.starters.map(id=>gP(id)).filter(Boolean);
+  const cadangan=lu.cadangan.map(id=>gP(id)).filter(Boolean);
+  const coaches=D.pelatihs.filter(pt=>pt.teamId===luTeam);
+  const yk=pid=>D.kartu.filter(k=>k.playerId===pid&&k.type==='yellow').length;
+  const km=pid=>(D.players.find(p=>p.id===pid)?.km||0)+D.kartu.filter(k=>k.playerId===pid&&k.type==='red').length;
+  function pCard(p,i){return`<div class="lucard" onclick="openPlayerD(${p.id})" style="animation:rowIn .25s ease ${i*.04}s both">${pAvt(p,44)}<div class="lunum" style="color:${t.color};border-color:${t.color}33;background:${t.color}11">${p.no||'?'}</div><div style="flex:1;min-width:0"><div class="lunm">${p.nama}</div><div style="display:flex;align-items:center;gap:5px;margin-top:3px"><span class="lupos ${posC(p.pos)}">${posI(p.pos)} ${p.pos}</span>${yk(p.id)?`<span class="sico yk">🟡${yk(p.id)}</span>`:''}${km(p.id)?`<span class="sico km">🔴${km(p.id)}</span>`:''}</div></div><div class="lust2"><div class="lustat"><div class="lusv">${p.gol}</div><div class="lusl">Gol</div></div><div class="lustat"><div class="lusv" style="color:#a78bfa">${p.assist}</div><div class="lusl">Assist</div></div></div></div>`;}
+  function cCard(pt,i){return`<div class="lucc" style="animation:rowIn .25s ease ${i*.04}s both">${cAvt(pt,48)}<div style="flex:1"><div style="font-size:13px;font-weight:700">${pt.nama}</div><div style="margin-top:3px"><span class="lupos" style="background:rgba(245,158,11,.12);color:#f59e0b">🎽 ${pt.jabatan}</span></div></div></div>`;}
+  document.getElementById('lu-main').innerHTML=`
+    <div style="background:linear-gradient(135deg,#0f1629,${t.color}18);border:1px solid ${t.color}33;border-radius:18px;padding:20px 22px;margin-bottom:14px;display:flex;align-items:center;gap:16px">${tAvt(t,64)}<div style="flex:1"><div style="font-size:20px;font-weight:900;margin-bottom:2px">${t.nama}</div><div style="font-size:12px;color:var(--muted);margin-bottom:10px">📍 ${t.kota} · ${gL(t.ligaId)?.nama||''}</div><div style="display:flex;gap:8px;flex-wrap:wrap"><span style="padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;background:${t.color}18;color:${t.color};border:1px solid ${t.color}33">⚡ ${starters.length} Starting</span><span style="padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;background:rgba(100,116,139,.12);color:var(--muted);border:1px solid var(--border)">🔄 ${cadangan.length} Cadangan</span><span style="padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.2)">🎽 ${coaches.length} Pelatih</span></div></div></div>
+    <div class="luw"><div class="lush" style="background:linear-gradient(90deg,rgba(230,57,70,.08),transparent)"><div class="luic" style="background:rgba(230,57,70,.12)">⚡</div><div><div class="lust">Starting Lineup</div></div><span class="lubd" style="background:rgba(230,57,70,.12);color:var(--accent)">${starters.length}</span></div>${starters.length?starters.map((p,i)=>pCard(p,i)).join(''):`<div class="luempty">Belum ada starting lineup</div>`}</div>
+    <div class="luw"><div class="lush"><div class="luic" style="background:rgba(100,116,139,.1)">🔄</div><div><div class="lust">Cadangan</div></div><span class="lubd" style="background:rgba(100,116,139,.1);color:var(--muted)">${cadangan.length}</span></div>${cadangan.length?cadangan.map((p,i)=>pCard(p,i)).join(''):`<div class="luempty">Belum ada cadangan</div>`}</div>
+    <div class="luw"><div class="lush" style="background:linear-gradient(90deg,rgba(245,158,11,.06),transparent)"><div class="luic" style="background:rgba(245,158,11,.12)">🎽</div><div><div class="lust">Staf Pelatih</div></div><span class="lubd" style="background:rgba(245,158,11,.12);color:#f59e0b">${coaches.length}</span></div>${coaches.length?coaches.map((pt,i)=>cCard(pt,i)).join(''):`<div class="luempty">Belum ada pelatih</div>`}</div>`;
+}
+
+// ========== ADMIN ==========
+function renderAdmin(){
+  if(!SEC.ok()){document.getElementById('adm-lock').style.display='block';document.getElementById('adm-content').style.display='none';return;}
+  document.getElementById('adm-lock').style.display='none';document.getElementById('adm-content').style.display='block';
+  [['ast-l',D.ligas.length],['ast-t',D.teams.length],['ast-p',D.players.length],['ast-m',D.matches.length]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=v;});
+  refreshSels();renderLists();
+}
+function swAdm(tab,el){
+  document.querySelectorAll('[id^="af-"]').forEach(f=>f.style.display='none');
+  document.querySelectorAll('.atab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('af-'+tab).style.display='block';if(el)el.classList.add('active');
+  if(tab==='events'){refreshEvSels();renderEvList();}
+  else if(tab==='lineup'){loadLinAdminSels();}
+  else if(tab==='generate'){refreshSels();onGenChange();}
+  else{refreshSels();renderLists();}
+}
+function refreshSels(){
+  const lo='<option value="">Pilih Liga</option>'+D.ligas.map(l=>`<option value="${l.id}">${l.nama}</option>`).join('');
+  const to='<option value="">Pilih Tim</option>'+D.teams.map(t=>`<option value="${t.id}">${t.nama}</option>`).join('');
+  const po='<option value="">Pilih Pemain</option>'+D.players.map(p=>`<option value="${p.id}">${p.nama} (${gT(p.teamId)?.nama||'?'})</option>`).join('');
+  const mo='<option value="">Pilih Match</option>'+D.matches.map(m=>`<option value="${m.id}">${gT(m.homeId)?.nama||'?'} vs ${gT(m.awayId)?.nama||'?'} (${fmtD(m.date)})</option>`).join('');
+  ['ft-l','fm-l','fg-lig'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=lo;});
+  const fbl=document.getElementById('fb-l');if(fbl)fbl.innerHTML='<option value="">Umum</option>'+D.ligas.map(l=>`<option value="${l.id}">${l.nama}</option>`).join('');
+  ['fp-t','fpt-t','fo-t'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=to;});
+  const fkp=document.getElementById('fk-p');if(fkp)fkp.innerHTML=po;
+  const fkm=document.getElementById('fk-m');if(fkm)fkm.innerHTML=mo;
+}
+function refreshEvSels(){
+  const em=document.getElementById('fe-m');if(em)em.innerHTML=D.matches.map(m=>`<option value="${m.id}">${gT(m.homeId)?.nama||'?'} vs ${gT(m.awayId)?.nama||'?'} (${fmtD(m.date)})</option>`).join('');
+  const ep=document.getElementById('fe-p');if(ep)ep.innerHTML=D.players.map(p=>`<option value="${p.id}">${p.nama} (${gT(p.teamId)?.nama||'?'})</option>`).join('');
+  renderEvList();
+}
+function renderEvList(){
+  const mid=parseInt(document.getElementById('fe-m')?.value);const el=document.getElementById('list-events');if(!el)return;
+  if(!mid){el.innerHTML='<p style="color:var(--muted);font-size:11px">Pilih pertandingan.</p>';return;}
+  const m=gM(mid);const tl2=document.getElementById('ev-title');
+  if(tl2)tl2.textContent=`🎯 ${gT(m?.homeId)?.nama||'?'} vs ${gT(m?.awayId)?.nama||'?'}`;
+  const evs=(D.evs[mid]||[]).slice().sort((a,b)=>a.menit-b.menit);
+  const tlbl={goal:'⚽ Gol',assist:'🎯 Assist',yellow:'🟡 K.Kuning',red:'🔴 K.Merah'};
+  el.innerHTML=evs.length?evs.map((ev,idx)=>{const p=gP(ev.pid);return`<div class="evli"><span>${{goal:'⚽',assist:'🎯',yellow:'🟡',red:'🔴'}[ev.type]||'▪️'}</span><span style="min-width:28px;font-size:10px;font-weight:800;color:var(--accent)">${ev.menit}'</span><div style="flex:1"><div style="font-weight:600">${p?.nama||'?'}</div><div style="font-size:10px;color:var(--muted)">${tlbl[ev.type]||ev.type}</div></div><button class="bsm bdel" onclick="delEv(${mid},${idx})">🗑️</button></div>`;}).join(''):'<p style="color:var(--muted);font-size:11px;padding:10px">Belum ada event.</p>';
+}
+function addEvent(){
+  if(!guardAdm())return;
+  const mid=parseInt(document.getElementById('fe-m')?.value),pid=parseInt(document.getElementById('fe-p')?.value),mn=parseInt(document.getElementById('fe-mn')?.value),type=document.getElementById('fe-t')?.value;
+  if(!mid||!pid||!mn){alert('Isi semua field!');return;}
+  if(!D.evs[mid])D.evs[mid]=[];D.evs[mid].push({id:D.nEV++,type,pid,menit:mn,ket:''});
+  document.getElementById('fe-mn').value='';showMsg('msg-event');renderEvList();
+}
+function delEv(mid,idx){if(!guardAdm())return;if(!confirm('Hapus event?'))return;D.evs[mid].splice(idx,1);renderEvList();}
+function filterTeams(){const lid=parseInt(document.getElementById('fm-l').value);const teams=lid?D.teams.filter(t=>t.ligaId===lid):D.teams;const o='<option value="">Pilih Tim</option>'+teams.map(t=>`<option value="${t.id}">${t.nama}</option>`).join('');document.getElementById('fm-h').innerHTML=o;document.getElementById('fm-a').innerHTML=o;}
+function togScore(){const s=document.getElementById('fm-s').value;document.getElementById('score-f').style.display=(s==='live'||s==='done')?'block':'none';}
+function renderLists(){
+  const ll=document.getElementById('list-liga');
+  if(ll)ll.innerHTML=D.ligas.map(l=>{const st=ligaStatus(l);const s=SIS[l.sistem];const logo=l.photo?`<img src="${l.photo}" style="width:32px;height:32px;border-radius:7px;object-fit:cover;flex-shrink:0">`:`<span style="font-size:20px;flex-shrink:0">${l.sport.split(' ')[0]}</span>`;return`<div class="li"><div class="lii">${logo}<div style="min-width:0"><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.nama}</div><div style="font-size:10px;color:var(--muted)">${l.musim||'-'}</div>${s?`<span style="font-size:9px;background:${s.color}15;color:${s.color};padding:1px 6px;border-radius:4px">${s.label}</span>`:''}</div></div><button class="bsm bdel" onclick="delLiga(${l.id})">🗑️</button></div>`;}).join('')||'<p style="color:var(--muted);font-size:11px">Belum ada.</p>';
+  const lt=document.getElementById('list-team');if(lt)lt.innerHTML=D.teams.map(t=>`<div class="li"><div class="lii">${tAvt(t,22)}<div><div style="font-weight:600">${t.nama}</div><div style="font-size:10px;color:var(--muted)">${gL(t.ligaId)?.nama||'-'} · ${t.kota}</div></div></div><button class="bsm bdel" onclick="delTeam(${t.id})">🗑️</button></div>`).join('')||'<p style="color:var(--muted);font-size:11px">Belum ada.</p>';
+  const lp=document.getElementById('list-player');if(lp)lp.innerHTML=D.players.map(p=>{const t=gT(p.teamId);return`<div class="li"><div class="lii">${pAvt(p,22)}<div style="min-width:0"><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.nama}</div><div style="font-size:10px;color:var(--muted)">#${p.no||'?'} ${p.pos} · ${t?.nama||'-'}${p.nisn?' · 🪪'+p.nisn:''}</div></div></div><button class="bsm bdel" onclick="delPlayer(${p.id})">🗑️</button></div>`;}).join('')||'<p style="color:var(--muted);font-size:11px">Belum ada.</p>';
+  const lpt=document.getElementById('list-pelatih');if(lpt)lpt.innerHTML=D.pelatihs.map(pt=>{const t=gT(pt.teamId);return`<div class="li"><div class="lii"><span>🎽</span><div><div style="font-weight:600">${pt.nama}</div><div style="font-size:10px;color:var(--muted)">${pt.jabatan} · ${t?.nama||'-'}</div></div></div><button class="bsm bdel" onclick="delPelatih(${pt.id})">🗑️</button></div>`;}).join('')||'<p style="color:var(--muted);font-size:11px">Belum ada.</p>';
+  const lo=document.getElementById('list-official');if(lo)lo.innerHTML=D.officials.map(o=>{const t=gT(o.teamId);return`<div class="li"><div class="lii"><span>📋</span><div><div style="font-weight:600">${o.nama}</div><div style="font-size:10px;color:var(--muted)">${o.jabatan} · ${t?.nama||'-'}</div></div></div><button class="bsm bdel" onclick="delOfficial(${o.id})">🗑️</button></div>`;}).join('')||'<p style="color:var(--muted);font-size:11px">Belum ada.</p>';
+  const lm=document.getElementById('list-match');if(lm)lm.innerHTML=D.matches.map(m=>`<div class="li"><div class="lii" style="flex-direction:column;align-items:flex-start;gap:1px"><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%">${gT(m.homeId)?.nama||'?'} vs ${gT(m.awayId)?.nama||'?'}</div><span style="font-size:10px;color:var(--muted)">${fmtD(m.date)} ${m.time} · ${m.status==='live'?'🔴':m.status==='done'?'✅ '+m.scoreH+'-'+m.scoreA:'📅'} ${m.fase||''}</span></div><button class="bsm bdel" onclick="delMatch(${m.id})">🗑️</button></div>`).join('')||'<p style="color:var(--muted);font-size:11px">Belum ada.</p>';
+  const lb=document.getElementById('list-berita');if(lb)lb.innerHTML=[...D.berita].sort((a,b)=>b.ts-a.ts).map(b=>`<div class="li"><div class="lii" style="flex-direction:column;align-items:flex-start;gap:1px"><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%">${b.emoji} ${b.judul}</div><span style="font-size:10px;color:var(--muted)">${b.cat} · ${ago(b.ts)}</span></div><button class="bsm bdel" onclick="delBerita(${b.id})">🗑️</button></div>`).join('')||'<p style="color:var(--muted);font-size:11px">Belum ada.</p>';
+  const lk=document.getElementById('list-kartu');if(lk)lk.innerHTML=[...D.kartu].reverse().map(k=>{const p=gP(k.playerId),t=p?gT(p.teamId):null;return`<div class="li"><div class="lii"><span>${k.type==='yellow'?'🟡':'🔴'}</span><div><div style="font-weight:600">${p?.nama||'?'} (${t?.nama||'?'})</div><div style="font-size:10px;color:var(--muted)">Menit ${k.menit}' · ${k.alasan}</div></div></div><button class="bsm bdel" onclick="delKartu(${k.id})">🗑️</button></div>`;}).join('')||'<p style="color:var(--muted);font-size:11px">Belum ada.</p>';
+}
+
+// CRUD
+function addLiga(){
+  if(!guardAdm())return;
+  const n=document.getElementById('fl-n').value.trim();if(!n){alert('Nama wajib!');return;}
+  const ds=document.getElementById('fl-ds').value,de=document.getElementById('fl-de').value;
+  if(ds&&de&&de<ds){alert('Tanggal berakhir harus setelah mulai!');return;}
+  const photo=PS['_fl-ph']||null;const sistem=document.getElementById('fl-sis').value;const sisCfg=getSisCfg();
+  D.ligas.push({id:D.nL++,nama:n,sport:document.getElementById('fl-sp').value,musim:document.getElementById('fl-ms').value,ds:ds||null,de:de||null,photo,sistem,sisCfg});
+  ['fl-n','fl-ms','fl-ds','fl-de'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  clrPh('fl-ph','fl-prv','fl-hint');showMsg('msg-liga');renderLists();refreshSels();
+}
+function delLiga(id){if(!guardAdm())return;if(!confirm('Hapus liga?'))return;D.ligas=D.ligas.filter(l=>l.id!==id);renderLists();refreshSels();}
+function addTeam(){if(!guardAdm())return;const n=document.getElementById('ft-n').value.trim(),lid=parseInt(document.getElementById('ft-l').value);if(!n||!lid){alert('Nama & liga wajib!');return;}const photo=PS['_ft-ph']||null;D.teams.push({id:D.nT++,ligaId:lid,nama:n,kota:document.getElementById('ft-k').value,color:document.getElementById('ft-c').value,photo});document.getElementById('ft-n').value='';document.getElementById('ft-k').value='';clrPh('ft-ph','ft-prv','ft-hint');showMsg('msg-team');renderLists();refreshSels();}
+function delTeam(id){if(!guardAdm())return;if(!confirm('Hapus tim?'))return;D.teams=D.teams.filter(t=>t.id!==id);renderLists();refreshSels();}
+function addPlayer(){
+  if(!guardAdm())return;
+  const n=document.getElementById('fp-n').value.trim(),tid=parseInt(document.getElementById('fp-t').value);
+  if(!n||!tid){alert('Nama & tim wajib!');return;}
+  const photo=PS['_fp-ph']||null;
+  D.players.push({id:D.nP++,teamId:tid,nama:n,no:parseInt(document.getElementById('fp-no').value)||0,pos:document.getElementById('fp-pos').value,nisn:document.getElementById('fp-nisn').value.trim(),usia:parseInt(document.getElementById('fp-us').value)||0,tinggi:parseInt(document.getElementById('fp-ti').value)||0,photo,gol:parseInt(document.getElementById('fp-g').value)||0,assist:parseInt(document.getElementById('fp-a').value)||0,km:parseInt(document.getElementById('fp-km').value)||0});
+  ['fp-n','fp-no','fp-nisn','fp-us','fp-ti'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['fp-g','fp-a','fp-km'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='0';});
+  clrPh('fp-ph','fp-prv','fp-hint');showMsg('msg-player');renderLists();refreshSels();
+}
+function delPlayer(id){if(!guardAdm())return;if(!confirm('Hapus pemain?'))return;D.players=D.players.filter(p=>p.id!==id);D.kartu=D.kartu.filter(k=>k.playerId!==id);Object.keys(D.lineups).forEach(tid=>{D.lineups[tid].starters=D.lineups[tid].starters.filter(pid=>pid!==id);D.lineups[tid].cadangan=D.lineups[tid].cadangan.filter(pid=>pid!==id);});renderLists();refreshSels();}
+function addPelatih(){if(!guardAdm())return;const n=document.getElementById('fpt-n').value.trim(),tid=parseInt(document.getElementById('fpt-t').value);if(!n||!tid){alert('Nama & tim wajib!');return;}const photo=PS['_fpt-ph']||null;D.pelatihs.push({id:D.nPT++,teamId:tid,nama:n,jabatan:document.getElementById('fpt-j').value,usia:parseInt(document.getElementById('fpt-us').value)||0,photo});document.getElementById('fpt-n').value='';document.getElementById('fpt-us').value='';clrPh('fpt-ph','fpt-prv','fpt-hint');showMsg('msg-pelatih');renderLists();}
+function delPelatih(id){if(!guardAdm())return;if(!confirm('Hapus pelatih?'))return;D.pelatihs=D.pelatihs.filter(p=>p.id!==id);renderLists();}
+function addOfficial(){if(!guardAdm())return;const n=document.getElementById('fo-n').value.trim(),tid=parseInt(document.getElementById('fo-t').value);if(!n||!tid){alert('Nama & tim wajib!');return;}const photo=PS['_fo-ph']||null;D.officials.push({id:D.nOF++,teamId:tid,nama:n,jabatan:document.getElementById('fo-j').value,hp:document.getElementById('fo-hp').value,photo});document.getElementById('fo-n').value='';document.getElementById('fo-hp').value='';clrPh('fo-ph','fo-prv','fo-hint');showMsg('msg-official');renderLists();}
+function delOfficial(id){if(!guardAdm())return;if(!confirm('Hapus official?'))return;D.officials=D.officials.filter(o=>o.id!==id);renderLists();}
+function addMatch(){if(!guardAdm())return;const lid=parseInt(document.getElementById('fm-l').value),hid=parseInt(document.getElementById('fm-h').value),aid=parseInt(document.getElementById('fm-a').value),dt=document.getElementById('fm-d').value;if(!lid||!hid||!aid||!dt){alert('Lengkapi data!');return;}if(hid===aid){alert('Tim tidak boleh sama!');return;}const st=document.getElementById('fm-s').value;const nid=D.nM++;D.matches.push({id:nid,ligaId:lid,homeId:hid,awayId:aid,date:dt,time:document.getElementById('fm-t').value,status:st,scoreH:st!=='upcoming'?parseInt(document.getElementById('fm-sh').value)||0:0,scoreA:st!=='upcoming'?parseInt(document.getElementById('fm-sa').value)||0:0,venue:document.getElementById('fm-v').value,fase:document.getElementById('fm-f').value||'Liga',round:1});if(!D.evs[nid])D.evs[nid]=[];document.getElementById('fm-d').value='';document.getElementById('fm-v').value='';document.getElementById('fm-f').value='';showMsg('msg-match');renderLists();refreshSels();}
+function delMatch(id){if(!guardAdm())return;if(!confirm('Hapus match?'))return;D.matches=D.matches.filter(m=>m.id!==id);D.kartu=D.kartu.filter(k=>k.matchId!==id);delete D.evs[id];renderLists();refreshSels();}
+function addBerita(){if(!guardAdm())return;const j=document.getElementById('fb-j').value.trim(),kn=document.getElementById('fb-k').value.trim();if(!j||!kn){alert('Judul & konten wajib!');return;}D.berita.push({id:D.nB++,judul:j,cat:document.getElementById('fb-c').value,ligaId:parseInt(document.getElementById('fb-l').value)||null,konten:kn,emoji:document.getElementById('fb-e').value||'📰',ts:Date.now()});document.getElementById('fb-j').value='';document.getElementById('fb-k').value='';document.getElementById('fb-e').value='';showMsg('msg-berita');renderLists();}
+function delBerita(id){if(!guardAdm())return;if(!confirm('Hapus berita?'))return;D.berita=D.berita.filter(b=>b.id!==id);renderLists();}
+function addKartu(){if(!guardAdm())return;const mid=parseInt(document.getElementById('fk-m').value),pid=parseInt(document.getElementById('fk-p').value),mn=parseInt(document.getElementById('fk-mn').value);if(!mid||!pid||!mn){alert('Lengkapi data!');return;}D.kartu.push({id:D.nK++,matchId:mid,playerId:pid,type:document.getElementById('fk-t').value,menit:mn,alasan:document.getElementById('fk-al').value||'Pelanggaran'});document.getElementById('fk-mn').value='';document.getElementById('fk-al').value='';showMsg('msg-kartu');renderLists();}
+function delKartu(id){if(!guardAdm())return;if(!confirm('Hapus kartu?'))return;D.kartu=D.kartu.filter(k=>k.id!==id);renderLists();}
+
+// LINEUP ADMIN
+function loadLinAdminSels(){const el=document.getElementById('flin-t');if(!el)return;el.innerHTML=D.teams.map(t=>`<option value="${t.id}">${t.nama}</option>`).join('');loadLinAdmin();}
+function loadLinAdmin(){const tid=parseInt(document.getElementById('flin-t')?.value);if(!tid)return;const lu=D.lineups[tid]||{starters:[],cadangan:[]};const used=[...lu.starters,...lu.cadangan];const avail=D.players.filter(p=>p.teamId===tid&&!used.includes(p.id));const el=document.getElementById('flin-p');if(el)el.innerHTML=avail.length?avail.map(p=>`<option value="${p.id}">#${p.no||'?'} ${p.nama} (${p.pos})</option>`).join(''):'<option value="">Semua sudah di lineup</option>';renderLinAdminList(tid);}
+function addToLineup(){if(!guardAdm())return;const tid=parseInt(document.getElementById('flin-t')?.value);const pid=parseInt(document.getElementById('flin-p')?.value);const st=document.getElementById('flin-s')?.value;if(!tid||!pid){alert('Pilih pemain!');return;}if(!D.lineups[tid])D.lineups[tid]={starters:[],cadangan:[]};const lu=D.lineups[tid];if([...lu.starters,...lu.cadangan].includes(pid)){alert('Sudah ada!');return;}if(st==='starter')lu.starters.push(pid);else lu.cadangan.push(pid);showMsg('msg-lineup');loadLinAdmin();}
+function removeFromLinup(tid,pid){if(!guardAdm())return;if(!D.lineups[tid])return;D.lineups[tid].starters=D.lineups[tid].starters.filter(id=>id!==pid);D.lineups[tid].cadangan=D.lineups[tid].cadangan.filter(id=>id!==pid);loadLinAdmin();}
+function moveLinup(tid,pid,from,to){if(!guardAdm())return;D.lineups[tid][from]=D.lineups[tid][from].filter(id=>id!==pid);D.lineups[tid][to].push(pid);loadLinAdmin();}
+function renderLinAdminList(tid){
+  const el=document.getElementById('list-lineup');if(!el)return;
+  const lu=D.lineups[tid]||{starters:[],cadangan:[]};let html='';
+  if(lu.starters.length){html+=`<div style="font-size:10px;font-weight:800;color:var(--accent);margin-bottom:6px;padding:5px 8px;background:rgba(230,57,70,.07);border-radius:6px">⚡ Starting (${lu.starters.length})</div>`;html+=lu.starters.map(pid=>{const p=gP(pid);if(!p)return'';return`<div class="li" style="margin-bottom:4px"><div class="lii">${pAvt(p,24)}<div><div style="font-weight:600">#${p.no||'?'} ${p.nama}</div><div style="font-size:10px;color:var(--muted)">${p.pos}</div></div></div><div style="display:flex;gap:3px"><button class="bsm bedit" onclick="moveLinup(${tid},${pid},'starters','cadangan')" title="Ke Cadangan">↓</button><button class="bsm bdel" onclick="removeFromLinup(${tid},${pid})">✕</button></div></div>`;}).join('');}
+  if(lu.cadangan.length){html+=`<div style="font-size:10px;font-weight:800;color:var(--muted);margin:10px 0 6px;padding:5px 8px;background:rgba(100,116,139,.07);border-radius:6px">🔄 Cadangan (${lu.cadangan.length})</div>`;html+=lu.cadangan.map(pid=>{const p=gP(pid);if(!p)return'';return`<div class="li" style="margin-bottom:4px"><div class="lii">${pAvt(p,24)}<div><div style="font-weight:600">#${p.no||'?'} ${p.nama}</div><div style="font-size:10px;color:var(--muted)">${p.pos}</div></div></div><div style="display:flex;gap:3px"><button class="bsm bedit" onclick="moveLinup(${tid},${pid},'cadangan','starters')" title="Ke Starting">↑</button><button class="bsm bdel" onclick="removeFromLinup(${tid},${pid})">✕</button></div></div>`;}).join('');}
+  if(!lu.starters.length&&!lu.cadangan.length)html='<p style="color:var(--muted);font-size:11px">Lineup kosong.</p>';
+  el.innerHTML=html;
+}
+
+// DOWNLOAD
+function drawH(ctx,W,title,sub){const g=ctx.createLinearGradient(0,0,W,120);g.addColorStop(0,'#0f1629');g.addColorStop(1,'#1a0a1a');ctx.fillStyle=g;ctx.fillRect(0,0,W,120);ctx.fillStyle='#ef4444';ctx.font='bold 22px sans-serif';ctx.fillText('Ayo',24,46);ctx.fillStyle='#fff';ctx.fillText('Score',24+ctx.measureText('Ayo').width,46);ctx.font='bold 18px sans-serif';ctx.fillStyle='#fff';ctx.fillText(title,24,76);ctx.font='12px sans-serif';ctx.fillStyle='#888';ctx.fillText(sub,24,98);ctx.textAlign='right';ctx.fillText(new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}),W-24,46);ctx.textAlign='left';}
+function dlKlasemen(){const lid=kLig||D.ligas[0]?.id;if(!lid)return;const k=calcK(lid);const liga=gL(lid);if(!k.length)return alert('Sistem gugur tidak punya klasemen!');const W=700,rH=38,tTop=140,H=tTop+rH*(k.length+1)+60;const cvs=document.getElementById('share-canvas');cvs.width=W;cvs.height=H;const ctx=cvs.getContext('2d');ctx.fillStyle='#0d0d0d';ctx.fillRect(0,0,W,H);drawH(ctx,W,'📊 Klasemen',liga?.nama+' — '+(liga?.musim||''));const cols=['#','Tim','M','W','D','L','GF','GA','GD','Pts'];const cw=[36,180,40,40,40,40,42,42,44,60];let cx=16;ctx.fillStyle='#1e1e1e';ctx.fillRect(16,tTop,W-32,rH);ctx.font='bold 11px sans-serif';ctx.fillStyle='#888';cols.forEach((c,i)=>{ctx.fillText(c,cx+(i===1?8:cw[i]/2-ctx.measureText(c).width/2),tTop+24);cx+=cw[i];});k.forEach((t,ri)=>{const y=tTop+rH*(ri+1);ctx.fillStyle=ri%2===0?'#121212':'#0e0e0e';ctx.fillRect(16,y,W-32,rH);cx=16;const vals=[ri+1,t.nama,t.M,t.W,t.D,t.L,t.GF,t.GA,(t.GD>0?'+':'')+t.GD,t.Pts];ctx.font=ri===0?'bold 12px sans-serif':'12px sans-serif';vals.forEach((v,i)=>{const tw2=ctx.measureText(String(v)).width;ctx.fillStyle=i===9?'#e63946':i===3?'#2ecc71':i===1?'#f0f0f0':'#aaa';ctx.fillText(String(v),cx+(i===1?8:cw[i]/2-tw2/2),y+24);cx+=cw[i];});});const a=document.createElement('a');a.download='klasemen.png';a.href=cvs.toDataURL('image/png');a.click();}
+function dlTopSkor(){const lid=kLig||D.ligas[0]?.id;if(!lid)return;const liga=gL(lid);const tids=D.teams.filter(t=>t.ligaId===lid).map(t=>t.id);const top=[...D.players].filter(p=>tids.includes(p.teamId)).sort((a,b)=>b.gol-a.gol).slice(0,10);if(!top.length)return;const W=600,rH=44,tTop=140,H=tTop+rH*(top.length+1)+60;const cvs=document.getElementById('share-canvas');cvs.width=W;cvs.height=H;const ctx=cvs.getContext('2d');ctx.fillStyle='#0d0d0d';ctx.fillRect(0,0,W,H);drawH(ctx,W,'⚽ Top Skor',liga?.nama||'');ctx.fillStyle='#1e1e1e';ctx.fillRect(16,tTop,W-32,rH);ctx.font='bold 11px sans-serif';ctx.fillStyle='#888';ctx.fillText('#',28,tTop+28);ctx.fillText('Pemain',60,tTop+28);ctx.fillText('Tim',280,tTop+28);ctx.fillText('Gol',420,tTop+28);top.forEach((p,ri)=>{const t=gT(p.teamId);const y=tTop+rH*(ri+1);ctx.fillStyle=ri%2===0?'#121212':'#0e0e0e';ctx.fillRect(16,y,W-32,rH);ctx.font='14px sans-serif';ctx.fillStyle='#f0f0f0';ctx.fillText(['🥇','🥈','🥉'][ri]||String(ri+1),20,y+28);ctx.font='bold 13px sans-serif';ctx.fillText(p.nama,60,y+28);ctx.font='11px sans-serif';ctx.fillStyle='#888';ctx.fillText(t?.nama||'-',280,y+28);ctx.font='bold 18px sans-serif';ctx.fillStyle='#e63946';ctx.fillText(String(p.gol),420,y+30);});const a=document.createElement('a');a.download='top-skor.png';a.href=cvs.toDataURL('image/png');a.click();}
+function dlHasil(){const lid=jLig||D.ligas[0]?.id;if(!lid)return;const liga=gL(lid);const ms=[...D.matches].filter(m=>m.ligaId===lid&&m.status==='done').sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10);if(!ms.length)return alert('Belum ada hasil!');const W=640,rH=50,tTop=140,H=tTop+rH*(ms.length+1)+60;const cvs=document.getElementById('share-canvas');cvs.width=W;cvs.height=H;const ctx=cvs.getContext('2d');ctx.fillStyle='#0d0d0d';ctx.fillRect(0,0,W,H);drawH(ctx,W,'📅 Hasil',liga?.nama||'');ctx.fillStyle='#1e1e1e';ctx.fillRect(16,tTop,W-32,rH);ctx.font='bold 11px sans-serif';ctx.fillStyle='#888';ctx.fillText('Tgl',28,tTop+32);ctx.fillText('Home',130,tTop+32);ctx.fillText('Skor',310,tTop+32);ctx.fillText('Away',390,tTop+32);ms.forEach((m,ri)=>{const home=gT(m.homeId),away=gT(m.awayId),y=tTop+rH*(ri+1);ctx.fillStyle=ri%2===0?'#121212':'#0e0e0e';ctx.fillRect(16,y,W-32,rH);ctx.font='10px sans-serif';ctx.fillStyle='#666';ctx.fillText(fmtD(m.date),28,y+32);ctx.font='bold 13px sans-serif';ctx.fillStyle='#f0f0f0';ctx.fillText(home?.nama||'?',130,y+32);const sc=m.scoreH+' - '+m.scoreA;ctx.font='bold 16px sans-serif';ctx.fillStyle='#e63946';ctx.fillText(sc,310,y+33);ctx.font='bold 13px sans-serif';ctx.fillStyle='#f0f0f0';ctx.fillText(away?.nama||'?',390,y+32);});const a=document.createElement('a');a.download='hasil.png';a.href=cvs.toDataURL('image/png');a.click();}
+
+// INIT
+renderHome();
+</script>
+</body>
+</html>
