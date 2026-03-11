@@ -1,18 +1,16 @@
 const { getStore } = require('@netlify/blobs');
 
-const HEADERS = {
-  'Content-Type':                 'application/json',
-  'Access-Control-Allow-Origin':  '*',
+const H = {
+  'Content-Type': 'application/json',
+  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 };
 
-const resp = (code, body) => ({
-  statusCode: code,
-  headers: HEADERS,
-  body: JSON.stringify(body),
-});
+const ok  = data => ({ statusCode: 200, headers: H, body: JSON.stringify(data) });
+const err = (code, msg) => ({ statusCode: code, headers: H, body: JSON.stringify({ error: msg }) });
 
+// ─── SEED DATA ────────────────────────────────────────────────────────────────
 const SEED = {
   ligas: [
     { id:1, nama:'Liga Super Indonesia', sport:'⚽ Sepak Bola', musim:'2025/2026', ds:'2025-09-01', de:'2026-05-30', photo:null, sistem:'double_rr',   sisCfg:{} },
@@ -56,72 +54,87 @@ const SEED = {
     { id:1, teamId:1, nama:'Hendra Gunawan', jabatan:'Manajer Tim', hp:'0812-0003', photo:null },
   ],
   matches: [
-    { id:1, ligaId:1, homeId:1, awayId:2, date:'2026-03-04', time:'19:00', status:'done',     scoreH:2, scoreA:1, venue:'GBK Jakarta',      round:1, fase:'Putaran 1' },
-    { id:2, ligaId:1, homeId:3, awayId:4, date:'2026-03-04', time:'15:00', status:'done',     scoreH:1, scoreA:1, venue:'Gelora 10 Nov',     round:1, fase:'Putaran 1' },
-    { id:3, ligaId:1, homeId:1, awayId:3, date:'2026-03-10', time:'19:00', status:'upcoming', scoreH:0, scoreA:0, venue:'GBK Jakarta',       round:2, fase:'Putaran 1' },
-    { id:4, ligaId:1, homeId:2, awayId:4, date:'2026-03-11', time:'15:30', status:'live',     scoreH:1, scoreA:0, venue:'Jakabaring',        round:2, fase:'Putaran 1' },
-    { id:5, ligaId:2, homeId:5, awayId:6, date:'2026-03-04', time:'10:30', status:'live',     scoreH:1, scoreA:0, venue:'GOR Futsal',        round:1, fase:'Liga'      },
-    { id:6, ligaId:3, homeId:7, awayId:8, date:'2026-03-12', time:'18:00', status:'upcoming', scoreH:0, scoreA:0, venue:'GOR Balai Rakyat',  round:1, fase:'Fase Liga'  },
+    { id:1, ligaId:1, homeId:1, awayId:2, date:'2026-03-04', time:'19:00', status:'done',     scoreH:2, scoreA:1, venue:'GBK Jakarta',     round:1, fase:'Putaran 1' },
+    { id:2, ligaId:1, homeId:3, awayId:4, date:'2026-03-04', time:'15:00', status:'done',     scoreH:1, scoreA:1, venue:'Gelora 10 Nov',    round:1, fase:'Putaran 1' },
+    { id:3, ligaId:1, homeId:1, awayId:3, date:'2026-03-10', time:'19:00', status:'upcoming', scoreH:0, scoreA:0, venue:'GBK Jakarta',      round:2, fase:'Putaran 1' },
+    { id:4, ligaId:1, homeId:2, awayId:4, date:'2026-03-11', time:'15:30', status:'live',     scoreH:1, scoreA:0, venue:'Jakabaring',       round:2, fase:'Putaran 1' },
+    { id:5, ligaId:2, homeId:5, awayId:6, date:'2026-03-04', time:'10:30', status:'live',     scoreH:1, scoreA:0, venue:'GOR Futsal',       round:1, fase:'Liga'     },
+    { id:6, ligaId:3, homeId:7, awayId:8, date:'2026-03-12', time:'18:00', status:'upcoming', scoreH:0, scoreA:0, venue:'GOR Balai Rakyat', round:1, fase:'Fase Liga' },
   ],
   evs: {
-    1: [
-      { id:1, type:'goal',   pid:1, menit:23, ket:'' },
-      { id:2, type:'assist', pid:4, menit:23, ket:'' },
-      { id:3, type:'yellow', pid:6, menit:41, ket:'' },
-      { id:4, type:'goal',   pid:1, menit:67, ket:'' },
-    ],
-    2: [
-      { id:5, type:'goal', pid:14, menit:35, ket:'' },
-      { id:6, type:'goal', pid:15, menit:88, ket:'' },
-    ],
-    4: [{ id:7, type:'goal', pid:12, menit:12, ket:'' }],
-    5: [{ id:8, type:'goal', pid:16, menit:7,  ket:'' }],
+    1:[{ id:1,type:'goal',pid:1,menit:23,ket:''},{id:2,type:'assist',pid:4,menit:23,ket:''},{id:3,type:'yellow',pid:6,menit:41,ket:''},{id:4,type:'goal',pid:1,menit:67,ket:''}],
+    2:[{id:5,type:'goal',pid:14,menit:35,ket:''},{id:6,type:'goal',pid:15,menit:88,ket:''}],
+    4:[{id:7,type:'goal',pid:12,menit:12,ket:''}],
+    5:[{id:8,type:'goal',pid:16,menit:7,ket:''}],
   },
   berita: [
-    { id:1, judul:'Garuda FC Pimpin Klasemen',    cat:'hasil',  ligaId:1, konten:'Garuda FC menang 2-1 atas Sriwijaya United.',              emoji:'🏆', ts:1741600000000 },
-    { id:2, judul:'Derby Jawa Pekan Depan!',       cat:'jadwal', ligaId:1, konten:'Garuda FC vs Majapahit City, 10 Maret 2026 pukul 19.00.', emoji:'📅', ts:1741596400000 },
-    { id:3, judul:'MINU FC Unggul di Copa Futsal', cat:'hasil',  ligaId:2, konten:'MINU FC memimpin 1-0 atas Saliwunto FS.',                 emoji:'🎯', ts:1741602000000 },
+    { id:1, judul:'Garuda FC Pimpin Klasemen',     cat:'hasil',  ligaId:1, konten:'Garuda FC menang 2-1 atas Sriwijaya United.',               emoji:'🏆', ts:1741600000000 },
+    { id:2, judul:'Derby Jawa Pekan Depan!',        cat:'jadwal', ligaId:1, konten:'Garuda FC vs Majapahit City, 10 Maret 2026 pukul 19.00.',   emoji:'📅', ts:1741596400000 },
+    { id:3, judul:'MINU FC Unggul di Copa Futsal',  cat:'hasil',  ligaId:2, konten:'MINU FC memimpin 1-0 atas Saliwunto FS.',                   emoji:'🎯', ts:1741602000000 },
   ],
   kartu: [
     { id:1, matchId:1, playerId:6,  type:'yellow', menit:41, alasan:'Pelanggaran keras' },
     { id:2, matchId:2, playerId:14, type:'red',    menit:90, alasan:'Dua kartu kuning'  },
   ],
   lineups: {
-    1: { starters:[1,2,3,4,5,6,7,8,9,10,11], cadangan:[] },
-    2: { starters:[12,13], cadangan:[] },
+    1:{ starters:[1,2,3,4,5,6,7,8,9,10,11], cadangan:[] },
+    2:{ starters:[12,13], cadangan:[] },
   },
 };
 
+// ─── HANDLER ─────────────────────────────────────────────────────────────────
 exports.handler = async function (event) {
-  if (event.httpMethod === 'OPTIONS') return { statusCode:204, headers:HEADERS, body:'' };
+  // CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 204, headers: H, body: '' };
+  }
 
-  const path   = (event.path || '').replace(/\/$/, '');
+  const path   = (event.path || '').toLowerCase();
   const method = event.httpMethod;
-  const isAll  = path.endsWith('/all')  && method === 'GET';
-  const isSync = path.endsWith('/sync') && method === 'POST';
 
-  if (!isAll && !isSync) return resp(404, { error:'Not found' });
-
-  let store = null;
-  try { store = getStore({ name:'ayoscore', consistency:'strong' }); } catch (_) {}
-
-  if (isAll) {
-    if (!store) return resp(200, SEED);
+  // ── GET /api/all ────────────────────────────────────────────────────────
+  if (method === 'GET' && path.includes('/all')) {
+    let store = null;
     try {
+      store = getStore({ name: 'ayoscore', consistency: 'strong' });
       const raw = await store.get('data');
-      if (!raw) { await store.set('data', JSON.stringify(SEED)); return resp(200, SEED); }
-      return resp(200, JSON.parse(raw));
-    } catch (e) { return resp(200, SEED); }
+      if (!raw) {
+        // Pertama kali: simpan seed ke Blobs
+        await store.set('data', JSON.stringify(SEED));
+        return ok(SEED);
+      }
+      return ok(JSON.parse(raw));
+    } catch (e) {
+      // Blobs belum aktif → kembalikan SEED (tidak error)
+      console.log('[api] Blobs tidak tersedia, kirim SEED. Alasan:', e.message);
+      return ok(SEED);
+    }
   }
 
-  if (isSync) {
+  // ── POST /api/sync ──────────────────────────────────────────────────────
+  if (method === 'POST' && path.includes('/sync')) {
     let body;
-    try { body = JSON.parse(event.body || '{}'); } catch (_) { return resp(400, { error:'JSON tidak valid' }); }
-    if (!body || !Array.isArray(body.ligas)) return resp(400, { error:'Data tidak valid' });
-    if (!store) return resp(200, { success:true, synced:false });
     try {
+      body = JSON.parse(event.body || '{}');
+    } catch (_) {
+      return err(400, 'Body bukan JSON valid');
+    }
+
+    if (!body || !Array.isArray(body.ligas)) {
+      return err(400, 'Data tidak valid');
+    }
+
+    try {
+      const store = getStore({ name: 'ayoscore', consistency: 'strong' });
       await store.set('data', JSON.stringify(body));
-      return resp(200, { success:true, synced:true, ts:Date.now() });
-    } catch (e) { return resp(500, { error:e.message }); }
+      return ok({ success: true, synced: true, ts: Date.now() });
+    } catch (e) {
+      // Blobs belum aktif → tetap ok, data tidak disimpan permanen
+      console.log('[api] Sync gagal (Blobs):', e.message);
+      return ok({ success: true, synced: false, note: 'blobs-unavailable' });
+    }
   }
+
+  // ── Endpoint tidak dikenal ──────────────────────────────────────────────
+  return err(404, 'Endpoint tidak ditemukan: ' + path);
 };
