@@ -811,7 +811,7 @@ function prevPh(inp,prv,hint){const el=document.getElementById(inp);if(!el||!el.
 function clrPh(inp,prv,hint){delete PS['_'+inp];const p=document.getElementById(prv);if(p)p.style.display='none';const h=document.getElementById(hint);if(h)h.style.display='block';const el=document.getElementById(inp);if(el)el.value='';}
 
 // ========== DATA ==========
-let D={
+window.D={
   ligas:[
     {id:1,nama:'Liga Super Indonesia',sport:'⚽ Sepak Bola',musim:'2025/2026',ds:'2025-09-01',de:'2026-05-30',photo:null,sistem:'double_rr',sisCfg:{}},
     {id:2,nama:'Copa Futsal Jakarta',sport:'🎯 Futsal',musim:'2026',ds:'2026-01-10',de:'2026-06-30',photo:null,sistem:'round_robin',sisCfg:{}},
