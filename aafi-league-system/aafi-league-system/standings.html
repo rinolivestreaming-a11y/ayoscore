@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standings – AAFI League</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<nav class="navbar"><div class="navbar-inner">
+  <a href="index.html" class="navbar-brand"><div class="brand-logo">AAFI</div><div class="brand-text"><span class="brand-name">AAFI League</span><span class="brand-sub">Football System</span></div></a>
+  <ul class="navbar-nav">
+    <li><a href="index.html" class="nav-link">Home</a></li><li><a href="standings.html" class="nav-link active">Standings</a></li>
+    <li><a href="fixtures.html" class="nav-link">Fixtures</a></li><li><a href="results.html" class="nav-link">Results</a></li>
+    <li><a href="match-center.html" class="nav-link">Match Center</a></li><li><a href="teams.html" class="nav-link">Teams</a></li>
+    <li><a href="players.html" class="nav-link">Players</a></li><li><a href="statistics.html" class="nav-link">Stats</a></li>
+    <li><a href="tournament.html" class="nav-link">Tournament</a></li><li><a href="playoff.html" class="nav-link">Playoff</a></li>
+    <li><a href="news.html" class="nav-link">News</a></li><li><a href="scoreboard.html" class="nav-link">Scoreboard</a></li>
+  </ul>
+  <div class="navbar-actions"><a href="admin.html" class="btn-admin">Admin ⚡</a></div>
+</div></nav>
+<div class="toast-container"></div>
+
+<div class="page-content">
+  <div style="background:linear-gradient(135deg,#080c14 0%,#0d2040 100%);padding:3rem 0;border-bottom:1px solid var(--border)">
+    <div class="container">
+      <div class="hero-eyebrow">📊 League Tables</div>
+      <h1 class="section-title" style="-webkit-text-fill-color:white;font-size:2.5rem">Standings</h1>
+      <p style="color:var(--text-secondary);margin-top:0.5rem">Current league positions for the 2024–25 season</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem">
+        <div class="league-tabs" id="standings-league-tabs">
+          <button class="league-tab active" data-league="U9">U9 League</button>
+          <button class="league-tab" data-league="U11">U11 League</button>
+          <button class="league-tab" data-league="U13">U13 League</button>
+          <button class="league-tab" data-league="U16">U16 League</button>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:center;font-size:0.75rem;color:var(--text-muted)">
+          <span style="border-left:3px solid #00d4ff;padding-left:0.5rem">Playoff Zone</span>
+          <span style="border-left:3px solid #ffd700;padding-left:0.5rem">Championship</span>
+          <span style="border-left:3px solid #ff1744;padding-left:0.5rem">Relegation</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title" id="standings-league-title">U9 League Table</span>
+          <span style="font-size:0.75rem;color:var(--text-muted)">Season 2024–25</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="standings-table">
+            <thead>
+              <tr>
+                <th style="width:36px">#</th><th>Team</th><th style="text-align:center">MP</th>
+                <th style="text-align:center;color:var(--green)">W</th><th style="text-align:center;color:var(--yellow)">D</th>
+                <th style="text-align:center;color:var(--red)">L</th><th style="text-align:center">GF</th>
+                <th style="text-align:center">GA</th><th style="text-align:center">GD</th>
+                <th style="text-align:center">Pts</th><th>Form</th>
+              </tr>
+            </thead>
+            <tbody id="standings-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Qualification Legend -->
+      <div style="display:flex;gap:2rem;margin-top:1.5rem;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--text-secondary)">
+          <div style="width:4px;height:16px;background:#00d4ff;border-radius:2px"></div>Playoff Qualification
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--text-secondary)">
+          <div style="width:4px;height:16px;background:#ffd700;border-radius:2px"></div>League Cup
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--text-secondary)">
+          <div style="width:4px;height:16px;background:#ff1744;border-radius:2px"></div>Relegation Zone
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script><script src="js/app.js"></script><script src="js/standings.js"></script>
+<script>
+document.querySelectorAll('#standings-league-tabs .league-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('#standings-league-tabs .league-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('standings-league-title').textContent = this.dataset.league + ' League Table';
+    window.AAFI.standings.load(this.dataset.league);
+  });
+});
+const urlLeague = new URLSearchParams(window.location.search).get('league');
+if (urlLeague) {
+  document.querySelectorAll('#standings-league-tabs .league-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.league === urlLeague);
+  });
+  window.AAFI.standings.load(urlLeague);
+}
+</script>
+</body></html>

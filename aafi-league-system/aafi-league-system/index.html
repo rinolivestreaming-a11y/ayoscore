@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AAFI Football League System</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-brand">
+      <div class="brand-logo">AAFI</div>
+      <div class="brand-text"><span class="brand-name">AAFI League</span><span class="brand-sub">Football System</span></div>
+    </a>
+    <ul class="navbar-nav">
+      <li><a href="index.html" class="nav-link active">Home</a></li>
+      <li><a href="standings.html" class="nav-link">Standings</a></li>
+      <li><a href="fixtures.html" class="nav-link">Fixtures</a></li>
+      <li><a href="results.html" class="nav-link">Results</a></li>
+      <li><a href="match-center.html" class="nav-link">Match Center</a></li>
+      <li><a href="teams.html" class="nav-link">Teams</a></li>
+      <li><a href="players.html" class="nav-link">Players</a></li>
+      <li><a href="statistics.html" class="nav-link">Stats</a></li>
+      <li><a href="tournament.html" class="nav-link">Tournament</a></li>
+      <li><a href="playoff.html" class="nav-link">Playoff</a></li>
+      <li><a href="news.html" class="nav-link">News</a></li>
+      <li><a href="scoreboard.html" class="nav-link">Scoreboard</a></li>
+    </ul>
+    <div class="navbar-actions">
+      <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+      <a href="admin.html" class="btn-admin">Admin ⚡</a>
+    </div>
+  </div>
+</nav>
+<div class="toast-container"></div>
+
+<div class="page-content">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"><div class="hero-bg-pattern"></div><div class="hero-glow"></div></div>
+    <div class="hero-content">
+      <div>
+        <div class="hero-eyebrow">⚽ 2024–25 Season</div>
+        <h1 class="hero-title">AAFI<br><span class="highlight">Football</span><br>League</h1>
+        <p class="hero-desc">The official platform for youth football leagues. Track live scores, standings, and player statistics across U9, U11, U13, and U16 leagues.</p>
+        <div class="hero-actions">
+          <a href="standings.html" class="btn btn-primary btn-lg">View Standings →</a>
+          <a href="match-center.html" class="btn btn-outline btn-lg">Live Match Center</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><span class="hero-stat-value" id="stat-leagues">4</span><span class="hero-stat-label">Leagues</span></div>
+          <div class="hero-stat"><span class="hero-stat-value" id="stat-teams">40</span><span class="hero-stat-label">Teams</span></div>
+          <div class="hero-stat"><span class="hero-stat-value" id="stat-players">400+</span><span class="hero-stat-label">Players</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="hero-match-card">
+          <div class="featured-match-label">Featured Live Match</div>
+          <div class="match-teams">
+            <div class="match-team">
+              <div class="match-team-logo">🔵</div>
+              <div class="match-team-name">Thunder FC</div>
+            </div>
+            <div class="match-score-center">
+              <div class="match-score"><span id="hero-home-score">2</span><span class="score-divider">–</span><span id="hero-away-score">1</span></div>
+              <div class="match-status status-live"><span class="live-dot"></span><span id="hero-minute">67'</span></div>
+              <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.5rem">U13 · Week 9</div>
+            </div>
+            <div class="match-team">
+              <div class="match-team-logo">🔴</div>
+              <div class="match-team-name">Eagles SC</div>
+            </div>
+          </div>
+          <a href="match-center.html" class="btn btn-ghost w-100" style="margin-top:1.5rem;width:100%;justify-content:center">Watch Live →</a>
+        </div>
+        <div style="margin-top:1rem">
+          <div class="league-tabs" id="home-league-tabs">
+            <button class="league-tab active" data-league="U9">U9</button>
+            <button class="league-tab" data-league="U11">U11</button>
+            <button class="league-tab" data-league="U13">U13</button>
+            <button class="league-tab" data-league="U16">U16</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LATEST RESULTS + STANDINGS PREVIEW -->
+  <section class="section" style="padding-top:3rem">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+        <!-- Recent Results -->
+        <div>
+          <div class="section-header-row">
+            <div><h2 class="section-title">Latest Results</h2><div class="section-subtitle">Recent match outcomes</div></div>
+            <a href="results.html" class="view-all-link">All Results →</a>
+          </div>
+          <div id="recent-results" style="display:flex;flex-direction:column;gap:0.75rem"></div>
+        </div>
+        <!-- Standings Preview -->
+        <div>
+          <div class="section-header-row">
+            <div><h2 class="section-title">Standings</h2><div class="section-subtitle">Current table</div></div>
+            <a href="standings.html" class="view-all-link">Full Table →</a>
+          </div>
+          <div class="card">
+            <table class="standings-table">
+              <thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th class="pts">Pts</th></tr></thead>
+              <tbody id="home-standings-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- UPCOMING FIXTURES -->
+  <section class="section" style="background:rgba(0,0,0,0.2);padding:4rem 0">
+    <div class="container">
+      <div class="section-header-row">
+        <div><h2 class="section-title">Upcoming Fixtures</h2><div class="section-subtitle">Next matches</div></div>
+        <a href="fixtures.html" class="view-all-link">All Fixtures →</a>
+      </div>
+      <div class="grid-3" id="upcoming-fixtures"></div>
+    </div>
+  </section>
+
+  <!-- TOP SCORERS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header-row">
+        <div><h2 class="section-title">Top Scorers</h2><div class="section-subtitle">Golden boot race</div></div>
+        <a href="statistics.html" class="view-all-link">Full List →</a>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">⚽ Goals Leaders</span></div>
+          <div id="home-top-scorers"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">🎯 Assists Leaders</span></div>
+          <div id="home-top-assists"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWS HIGHLIGHTS -->
+  <section class="section" style="background:rgba(0,0,0,0.2);padding:4rem 0">
+    <div class="container">
+      <div class="section-header-row">
+        <div><h2 class="section-title">Latest News</h2></div>
+        <a href="news.html" class="view-all-link">All News →</a>
+      </div>
+      <div class="grid-3" id="home-news"></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="navbar-brand" style="margin-bottom:1rem">
+            <div class="brand-logo">AAFI</div>
+            <div class="brand-text"><span class="brand-name">AAFI League</span><span class="brand-sub">Football System</span></div>
+          </div>
+          <p class="footer-brand-desc">The official management platform for AAFI youth football leagues. Supporting U9, U11, U13, and U16 age groups.</p>
+        </div>
+        <div>
+          <div class="footer-heading">Leagues</div>
+          <ul class="footer-links">
+            <li><a href="standings.html?league=U9">U9 League</a></li>
+            <li><a href="standings.html?league=U11">U11 League</a></li>
+            <li><a href="standings.html?league=U13">U13 League</a></li>
+            <li><a href="standings.html?league=U16">U16 League</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-heading">Platform</div>
+          <ul class="footer-links">
+            <li><a href="match-center.html">Match Center</a></li>
+            <li><a href="tournament.html">Tournament</a></li>
+            <li><a href="playoff.html">Playoffs</a></li>
+            <li><a href="scoreboard.html">Scoreboard</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-heading">Admin</div>
+          <ul class="footer-links">
+            <li><a href="admin.html">Dashboard</a></li>
+            <li><a href="admin.html#teams">Teams Manager</a></li>
+            <li><a href="admin.html#players">Players Manager</a></li>
+            <li><a href="admin.html#live">Live Control</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2024 AAFI Football League System. All rights reserved.</span>
+        <span style="color:var(--primary)">⚽ Built for Youth Football</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/app.js"></script>
+<script src="js/standings.js"></script>
+<script src="js/statistics.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const AAFI = window.AAFI;
+
+  // Home league tabs switch
+  document.querySelectorAll('#home-league-tabs .league-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('#home-league-tabs .league-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      loadHomeData(this.dataset.league);
+    });
+  });
+
+  function loadHomeData(league) {
+    // Recent Results
+    const resultsEl = document.getElementById('recent-results');
+    const matches = AAFI.generateDemoMatches(league, 4).filter(m => m.status === 'finished');
+    resultsEl.innerHTML = matches.map(m => AAFI.renderMatchCard(m)).join('');
+
+    // Standings preview (top 5)
+    const standings = AAFI.generateDemoStandings(league).slice(0, 5);
+    document.getElementById('home-standings-body').innerHTML = standings.map((t, i) => `
+      <tr class="${AAFI.utils.getQualClass(i+1)}">
+        <td class="pos">${i+1}</td>
+        <td><div class="team-row"><span>${t.team_emoji}</span><span style="font-weight:600">${t.team_name}</span></div></td>
+        <td style="text-align:center">${t.played}</td>
+        <td style="text-align:center;color:var(--green)">${t.won}</td>
+        <td style="text-align:center;color:var(--yellow)">${t.drawn}</td>
+        <td style="text-align:center;color:var(--red)">${t.lost}</td>
+        <td class="pts">${t.points}</td>
+      </tr>
+    `).join('');
+
+    // Upcoming Fixtures
+    const upcoming = AAFI.generateDemoMatches(league, 3).filter(m => m.status === 'scheduled');
+    document.getElementById('upcoming-fixtures').innerHTML = upcoming.map(m => AAFI.renderMatchCard(m)).join('');
+
+    // Top Scorers
+    const scorers = AAFI.generateDemoScorers(league);
+    const utils = AAFI.utils;
+    document.getElementById('home-top-scorers').innerHTML = scorers.slice(0,5).map((p,i) => `
+      <div class="scorer-row">
+        <div class="scorer-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</div>
+        <div class="scorer-info"><div class="scorer-name">${p.name}</div><div class="scorer-team">${p.team}</div></div>
+        <div class="scorer-goals">${p.goals}</div>
+      </div>`).join('');
+    document.getElementById('home-top-assists').innerHTML = scorers.slice(0,5).sort((a,b)=>b.assists-a.assists).map((p,i) => `
+      <div class="scorer-row">
+        <div class="scorer-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</div>
+        <div class="scorer-info"><div class="scorer-name">${p.name}</div><div class="scorer-team">${p.team}</div></div>
+        <div class="scorer-goals" style="color:var(--primary)">${p.assists}</div>
+      </div>`).join('');
+  }
+
+  // News
+  const newsItems = [
+    { title: 'Thunder FC Clinch Top Spot', excerpt: 'An impressive 3-0 victory sends Thunder FC to the summit of the U13 league table.', date: '2 hours ago', category: 'Match Report', emoji: '🏆' },
+    { title: 'U11 Player of the Month Announced', excerpt: 'Carlos Martinez claims the award after a stunning run of six goals in four matches.', date: '1 day ago', category: 'Award', emoji: '⭐' },
+    { title: 'Season Schedule Update', excerpt: 'Three matches rescheduled due to adverse weather conditions. New dates confirmed.', date: '3 days ago', category: 'Announcement', emoji: '📅' }
+  ];
+  document.getElementById('home-news').innerHTML = newsItems.map(n => `
+    <div class="card" style="cursor:pointer" onclick="location.href='news.html'">
+      <div style="height:120px;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 15px,rgba(255,255,255,0.03) 15px,rgba(255,255,255,0.03) 30px)"></div>
+        ${n.emoji}
+      </div>
+      <div style="padding:1.25rem">
+        <span class="badge badge-primary" style="margin-bottom:0.75rem">${n.category}</span>
+        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:0.5rem">${n.title}</h3>
+        <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;margin-bottom:1rem">${n.excerpt}</p>
+        <div style="font-size:0.75rem;color:var(--text-muted)">${n.date}</div>
+      </div>
+    </div>`).join('');
+
+  loadHomeData('U9');
+
+  // Animated minute counter
+  let min = 67;
+  setInterval(() => {
+    min = (min + 1) % 90 || 1;
+    const el = document.getElementById('hero-minute');
+    if (el) el.textContent = min + "'";
+  }, 5000);
+});
+</script>
+</body>
+</html>

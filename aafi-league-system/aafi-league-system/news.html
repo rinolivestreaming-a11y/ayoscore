@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>News – AAFI League</title><link rel="stylesheet" href="css/main.css"></head>
+<body>
+<nav class="navbar"><div class="navbar-inner">
+  <a href="index.html" class="navbar-brand"><div class="brand-logo">AAFI</div><div class="brand-text"><span class="brand-name">AAFI League</span><span class="brand-sub">Football System</span></div></a>
+  <ul class="navbar-nav">
+    <li><a href="index.html" class="nav-link">Home</a></li><li><a href="standings.html" class="nav-link">Standings</a></li>
+    <li><a href="fixtures.html" class="nav-link">Fixtures</a></li><li><a href="results.html" class="nav-link">Results</a></li>
+    <li><a href="match-center.html" class="nav-link">Match Center</a></li><li><a href="teams.html" class="nav-link">Teams</a></li>
+    <li><a href="players.html" class="nav-link">Players</a></li><li><a href="statistics.html" class="nav-link">Stats</a></li>
+    <li><a href="tournament.html" class="nav-link">Tournament</a></li><li><a href="playoff.html" class="nav-link">Playoff</a></li>
+    <li><a href="news.html" class="nav-link active">News</a></li><li><a href="scoreboard.html" class="nav-link">Scoreboard</a></li>
+  </ul>
+  <div class="navbar-actions"><a href="admin.html" class="btn-admin">Admin ⚡</a></div>
+</div></nav>
+<div class="toast-container"></div>
+<div class="page-content">
+  <div style="background:linear-gradient(135deg,#080c14,#0d2040);padding:3rem 0;border-bottom:1px solid var(--border)">
+    <div class="container"><div class="hero-eyebrow">📰 Latest Updates</div><h1 class="section-title" style="-webkit-text-fill-color:white">News</h1></div>
+  </div>
+  <section class="section"><div class="container">
+    <div class="grid-3" id="news-grid"></div>
+  </div></section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script><script src="js/app.js"></script>
+<script>
+const NEWS = [
+  {emoji:'🏆',title:'Thunder FC Claim Top Spot',excerpt:'A commanding 3-0 victory sends Thunder FC to the summit of the U13 league table with an eight-point lead.',date:'2 hours ago',category:'Match Report',league:'U13'},
+  {emoji:'⭐',title:'Player of the Month: Carlos Martinez',excerpt:'The U11 midfielder claims the award after scoring six goals in four matches including a stunning hat-trick.',date:'1 day ago',category:'Award',league:'U11'},
+  {emoji:'📅',title:'Season Schedule Update',excerpt:'Three matches rescheduled due to adverse weather. New dates have been confirmed for all affected games.',date:'3 days ago',category:'Announcement',league:'All'},
+  {emoji:'⚽',title:'Record-Breaking Week in U16',excerpt:'A remarkable 12 goals scored across four U16 matches sets a new season record for goals in a single round.',date:'5 days ago',category:'Stats',league:'U16'},
+  {emoji:'🏟️',title:'New Training Ground Opens',excerpt:'AAFI officially opens its new state-of-the-art youth training facility available to all registered teams.',date:'1 week ago',category:'Facility',league:'All'},
+  {emoji:'🎓',title:'Coaching Clinic Registration Open',excerpt:'Sign up for our upcoming youth coaching clinic. Limited spaces available. Register by next Friday.',date:'1 week ago',category:'Event',league:'All'},
+  {emoji:'🥇',title:'U9 Season Highlights',excerpt:'Brilliant performances from across all teams have made this one of the most exciting U9 seasons in years.',date:'2 weeks ago',category:'Feature',league:'U9'},
+  {emoji:'📊',title:'Mid-Season Statistics Report',excerpt:'Full breakdown of goals, assists, cards, and possession stats from the first half of the 2024-25 season.',date:'2 weeks ago',category:'Stats',league:'All'},
+  {emoji:'🔵',title:'Eagles SC Sign New Coach',excerpt:'Eagles SC announce the appointment of a new head coach ahead of the crucial second half of the season.',date:'3 weeks ago',category:'Club News',league:'U13'},
+];
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('news-grid').innerHTML = NEWS.map(n => `
+    <div class="card" style="cursor:pointer;overflow:hidden">
+      <div style="height:120px;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 15px,rgba(255,255,255,0.03) 15px,rgba(255,255,255,0.03) 30px)"></div>
+        ${n.emoji}
+        <span class="badge badge-primary" style="position:absolute;top:0.75rem;right:0.75rem">${n.league}</span>
+      </div>
+      <div style="padding:1.25rem">
+        <span class="badge badge-secondary" style="margin-bottom:0.75rem">${n.category}</span>
+        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:0.5rem;line-height:1.2">${n.title}</h3>
+        <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;margin-bottom:1rem">${n.excerpt}</p>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:0.75rem;color:var(--text-muted)">${n.date}</span>
+          <span style="font-size:0.75rem;color:var(--primary);font-weight:600">Read More →</span>
+        </div>
+      </div>
+    </div>`).join('');
+});
+</script>
+</body></html>

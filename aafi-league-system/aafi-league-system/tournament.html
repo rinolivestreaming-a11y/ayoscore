@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tournament – AAFI League</title>
+<link rel="stylesheet" href="css/main.css"><link rel="stylesheet" href="css/bracket.css"></head>
+<body>
+<nav class="navbar"><div class="navbar-inner">
+  <a href="index.html" class="navbar-brand"><div class="brand-logo">AAFI</div><div class="brand-text"><span class="brand-name">AAFI League</span><span class="brand-sub">Football System</span></div></a>
+  <ul class="navbar-nav">
+    <li><a href="index.html" class="nav-link">Home</a></li><li><a href="standings.html" class="nav-link">Standings</a></li>
+    <li><a href="fixtures.html" class="nav-link">Fixtures</a></li><li><a href="results.html" class="nav-link">Results</a></li>
+    <li><a href="match-center.html" class="nav-link">Match Center</a></li><li><a href="teams.html" class="nav-link">Teams</a></li>
+    <li><a href="players.html" class="nav-link">Players</a></li><li><a href="statistics.html" class="nav-link">Stats</a></li>
+    <li><a href="tournament.html" class="nav-link active">Tournament</a></li><li><a href="playoff.html" class="nav-link">Playoff</a></li>
+    <li><a href="news.html" class="nav-link">News</a></li><li><a href="scoreboard.html" class="nav-link">Scoreboard</a></li>
+  </ul>
+  <div class="navbar-actions"><a href="admin.html" class="btn-admin">Admin ⚡</a></div>
+</div></nav>
+<div class="toast-container"></div>
+<div class="page-content">
+  <div style="background:linear-gradient(135deg,#080c14,#0d2040);padding:3rem 0;border-bottom:1px solid var(--border)">
+    <div class="container">
+      <div class="hero-eyebrow">🏆 Knockout Cup</div>
+      <h1 class="section-title" style="-webkit-text-fill-color:white">AAFI Cup 2024</h1>
+      <p style="color:var(--text-secondary);margin-top:0.5rem">8-Team Knockout Tournament</p>
+    </div>
+  </div>
+  <section class="section"><div class="container">
+    <div style="display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;align-items:center">
+      <span class="badge badge-success">🟢 In Progress</span>
+      <span style="color:var(--text-muted);font-size:0.85rem">Quarter Finals Stage</span>
+      <a href="admin.html#tournament" class="btn btn-outline btn-sm" style="margin-left:auto">Manage →</a>
+    </div>
+    <!-- Bracket -->
+    <div class="card" style="overflow:hidden">
+      <div class="card-header"><span class="card-title">🏆 Tournament Bracket</span></div>
+      <div class="bracket-container" id="bracket-container"></div>
+    </div>
+  </div></section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script><script src="js/app.js"></script><script src="js/tournament.js"></script>
+</body></html>

@@ -1,0 +1,324 @@
+/* AAFI Scoreboard CSS - Stadium Display */
+body.scoreboard-page {
+  background: #000;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.scoreboard-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: linear-gradient(180deg, #050810 0%, #080c18 100%);
+  font-family: 'Barlow Condensed', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.scoreboard-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(0,212,255,0.02) 80px, rgba(0,212,255,0.02) 81px),
+    repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(0,212,255,0.02) 80px, rgba(0,212,255,0.02) 81px);
+  pointer-events: none;
+}
+
+/* Header bar */
+.scoreboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 3rem;
+  border-bottom: 1px solid rgba(0,212,255,0.1);
+  background: rgba(0,0,0,0.3);
+}
+
+.scoreboard-league-name {
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+}
+
+.scoreboard-logo {
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: #00d4ff;
+}
+
+.scoreboard-matchday {
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.5);
+}
+
+/* Main score area */
+.scoreboard-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.scoreboard-content {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.scoreboard-teams-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 2rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.sb-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sb-team-logo {
+  width: clamp(100px, 15vw, 160px);
+  height: clamp(100px, 15vw, 160px);
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 3px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(2rem, 4vw, 4rem);
+  font-weight: 900;
+}
+
+.sb-team-name {
+  font-size: clamp(1.5rem, 3.5vw, 3rem);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.sb-team-city {
+  font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Score center */
+.sb-score-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sb-score {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sb-score-num {
+  font-size: clamp(5rem, 12vw, 10rem);
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow: 0 0 60px rgba(0,212,255,0.4);
+  min-width: clamp(80px, 15vw, 150px);
+  text-align: center;
+}
+
+.sb-score-divider {
+  font-size: clamp(3rem, 7vw, 6rem);
+  color: rgba(255,255,255,0.2);
+  line-height: 1;
+}
+
+/* Timer */
+.sb-timer {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 900;
+  color: #00d4ff;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 30px rgba(0,212,255,0.5);
+}
+
+.sb-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.sb-status.live {
+  color: #ff1744;
+}
+
+.sb-status-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #ff1744;
+  animation: pulse-red 1.5s ease-in-out infinite;
+}
+
+/* Period indicator */
+.sb-period {
+  font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Event ticker */
+.scoreboard-ticker {
+  background: rgba(0,212,255,0.05);
+  border-top: 1px solid rgba(0,212,255,0.15);
+  padding: 0.85rem 3rem;
+  overflow: hidden;
+}
+
+.ticker-inner {
+  display: flex;
+  gap: 4rem;
+  animation: tickerScroll 30s linear infinite;
+  white-space: nowrap;
+}
+
+.ticker-event {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: clamp(0.85rem, 1.5vw, 1rem);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.8);
+}
+
+.ticker-event-icon { font-size: 1.1rem; }
+
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Footer stats row */
+.scoreboard-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.3);
+}
+
+.sb-stat-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+.sb-stat-col:last-child { border-right: none; }
+
+.sb-stat-label {
+  font-size: clamp(0.6rem, 1vw, 0.75rem);
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.sb-stat-values {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.sb-stat-val {
+  font-size: clamp(1.2rem, 2.5vw, 2rem);
+  font-weight: 900;
+  color: rgba(255,255,255,0.8);
+  min-width: 40px;
+  text-align: center;
+}
+
+.sb-stat-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: 120px;
+}
+
+.sb-stat-bar-row {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.05);
+}
+
+.sb-stat-bar-home {
+  background: linear-gradient(90deg, #00d4ff, #0066ff);
+  height: 100%;
+  transition: width 1s ease;
+}
+
+.sb-stat-bar-away {
+  background: linear-gradient(90deg, #ff6b00, #ff4444);
+  height: 100%;
+  transition: width 1s ease;
+}
+
+/* Goal animation */
+.goal-flash {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle, rgba(0,230,118,0.3) 0%, transparent 70%);
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  animation: goalFlash 2s ease forwards;
+}
+
+@keyframes goalFlash {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.goal-text {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(5rem, 15vw, 10rem);
+  font-weight: 900;
+  color: #00e676;
+  text-shadow: 0 0 80px rgba(0,230,118,0.7);
+  z-index: 101;
+  opacity: 0;
+  pointer-events: none;
+  animation: goalText 2.5s ease forwards;
+  letter-spacing: 0.1em;
+}
+
+@keyframes goalText {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+}

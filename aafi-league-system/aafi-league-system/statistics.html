@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Statistics – AAFI League</title><link rel="stylesheet" href="css/main.css"></head>
+<body>
+<nav class="navbar"><div class="navbar-inner">
+  <a href="index.html" class="navbar-brand"><div class="brand-logo">AAFI</div><div class="brand-text"><span class="brand-name">AAFI League</span><span class="brand-sub">Football System</span></div></a>
+  <ul class="navbar-nav">
+    <li><a href="index.html" class="nav-link">Home</a></li><li><a href="standings.html" class="nav-link">Standings</a></li>
+    <li><a href="fixtures.html" class="nav-link">Fixtures</a></li><li><a href="results.html" class="nav-link">Results</a></li>
+    <li><a href="match-center.html" class="nav-link">Match Center</a></li><li><a href="teams.html" class="nav-link">Teams</a></li>
+    <li><a href="players.html" class="nav-link">Players</a></li><li><a href="statistics.html" class="nav-link active">Stats</a></li>
+    <li><a href="tournament.html" class="nav-link">Tournament</a></li><li><a href="playoff.html" class="nav-link">Playoff</a></li>
+    <li><a href="news.html" class="nav-link">News</a></li><li><a href="scoreboard.html" class="nav-link">Scoreboard</a></li>
+  </ul>
+  <div class="navbar-actions"><a href="admin.html" class="btn-admin">Admin ⚡</a></div>
+</div></nav>
+<div class="toast-container"></div>
+<div class="page-content" id="statistics-page">
+  <div style="background:linear-gradient(135deg,#080c14,#0d2040);padding:3rem 0;border-bottom:1px solid var(--border)">
+    <div class="container"><div class="hero-eyebrow">📊 Analytics</div><h1 class="section-title" style="-webkit-text-fill-color:white">Statistics</h1></div>
+  </div>
+  <section class="section"><div class="container">
+    <div style="margin-bottom:2rem">
+      <div class="league-tabs" id="stat-league-tabs">
+        <button class="league-tab active" data-league="U9">U9</button>
+        <button class="league-tab" data-league="U11">U11</button>
+        <button class="league-tab" data-league="U13">U13</button>
+        <button class="league-tab" data-league="U16">U16</button>
+      </div>
+    </div>
+    <!-- Top Scorers + Assists -->
+    <div class="grid-2" style="margin-bottom:2rem">
+      <div class="card">
+        <div class="card-header"><span class="card-title">🥇 Top Scorers</span></div>
+        <div id="top-scorers-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">🎯 Top Assists</span></div>
+        <div id="top-assists-list"></div>
+      </div>
+    </div>
+    <!-- Charts -->
+    <div class="grid-2" style="margin-bottom:2rem">
+      <div class="chart-wrap">
+        <div class="chart-title">Goals Per Round</div>
+        <div id="goals-per-round-chart"></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">Top Scoring Teams</div>
+        <div id="top-scoring-teams-chart"></div>
+      </div>
+    </div>
+    <!-- Cards leaderboard -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">🟨 Disciplinary Records</span></div>
+      <div id="cards-list" style="padding:0"></div>
+    </div>
+  </div></section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script><script src="js/app.js"></script><script src="js/statistics.js"></script>
+<script>
+document.querySelectorAll('#stat-league-tabs .league-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('#stat-league-tabs .league-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+document.addEventListener('DOMContentLoaded', () => {
+  function loadCards(league) {
+    const AAFI = window.AAFI;
+    const scorers = AAFI.generateDemoScorers(league);
+    const cardsData = scorers.map(p => ({...p, yellow: Math.floor(Math.random()*5), red: Math.floor(Math.random()*2)})).sort((a,b)=>(b.yellow+b.red*3)-(a.yellow+a.red*3));
+    document.getElementById('cards-list').innerHTML = cardsData.slice(0,8).map((p,i) => `
+      <div style="display:flex;align-items:center;gap:1rem;padding:0.85rem 1rem;border-bottom:1px solid var(--border)">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:var(--text-muted);width:24px;text-align:center">${i+1}</div>
+        <div style="flex:1"><div style="font-weight:600">${p.name}</div><div style="font-size:0.75rem;color:var(--text-muted)">${p.team}</div></div>
+        <div style="display:flex;gap:0.75rem">
+          <div style="text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:800;color:var(--yellow)">${p.yellow}</div><div style="font-size:0.6rem;color:var(--text-muted)">Yellow</div></div>
+          <div style="text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:800;color:var(--red)">${p.red}</div><div style="font-size:0.6rem;color:var(--text-muted)">Red</div></div>
+        </div>
+      </div>`).join('');
+  }
+
+  // Assists
+  function loadAssists(league) {
+    const scorers = window.AAFI.generateDemoScorers(league);
+    const sorted = [...scorers].sort((a,b) => b.assists - a.assists);
+    document.getElementById('top-assists-list').innerHTML = sorted.slice(0,10).map((p,i) => `
+      <div class="scorer-row">
+        <div class="scorer-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</div>
+        <div class="scorer-info"><div class="scorer-name">${p.name}</div><div class="scorer-team">${p.team}</div></div>
+        <div class="scorer-goals" style="color:var(--primary)">${p.assists}</div>
+      </div>`).join('');
+  }
+
+  window._origLoad = window.AAFI.statistics.generateAnalytics;
+  function fullLoad(league) {
+    window.AAFI.statistics.renderTopScorers(window.AAFI.generateDemoScorers(league), document.getElementById('top-scorers-list'));
+    loadAssists(league);
+    const analytics = window.AAFI.statistics.generateAnalytics(league);
+    window.AAFI.statistics.renderBarChart(analytics.goalsPerRound, document.getElementById('goals-per-round-chart'));
+    window.AAFI.statistics.renderBarChart(analytics.topScoringTeams, document.getElementById('top-scoring-teams-chart'), {color:'linear-gradient(180deg,#ff6b00,#ff4444)'});
+    loadCards(league);
+  }
+
+  fullLoad('U9');
+  document.querySelectorAll('#stat-league-tabs .league-tab').forEach(tab => {
+    tab.addEventListener('click', () => fullLoad(tab.dataset.league));
+  });
+});
+</script>
+</body></html>

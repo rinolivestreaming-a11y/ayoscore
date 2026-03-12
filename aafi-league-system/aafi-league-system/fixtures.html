@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Fixtures – AAFI League</title><link rel="stylesheet" href="css/main.css"></head>
+<body>
+<nav class="navbar"><div class="navbar-inner">
+  <a href="index.html" class="navbar-brand"><div class="brand-logo">AAFI</div><div class="brand-text"><span class="brand-name">AAFI League</span><span class="brand-sub">Football System</span></div></a>
+  <ul class="navbar-nav">
+    <li><a href="index.html" class="nav-link">Home</a></li><li><a href="standings.html" class="nav-link">Standings</a></li>
+    <li><a href="fixtures.html" class="nav-link active">Fixtures</a></li><li><a href="results.html" class="nav-link">Results</a></li>
+    <li><a href="match-center.html" class="nav-link">Match Center</a></li><li><a href="teams.html" class="nav-link">Teams</a></li>
+    <li><a href="players.html" class="nav-link">Players</a></li><li><a href="statistics.html" class="nav-link">Stats</a></li>
+    <li><a href="tournament.html" class="nav-link">Tournament</a></li><li><a href="playoff.html" class="nav-link">Playoff</a></li>
+    <li><a href="news.html" class="nav-link">News</a></li><li><a href="scoreboard.html" class="nav-link">Scoreboard</a></li>
+  </ul>
+  <div class="navbar-actions"><a href="admin.html" class="btn-admin">Admin ⚡</a></div>
+</div></nav>
+<div class="toast-container"></div>
+<div class="page-content">
+  <div style="background:linear-gradient(135deg,#080c14,#0d2040);padding:3rem 0;border-bottom:1px solid var(--border)">
+    <div class="container"><div class="hero-eyebrow">📅 Schedule</div><h1 class="section-title" style="-webkit-text-fill-color:white">Fixtures</h1></div>
+  </div>
+  <section class="section"><div class="container">
+    <div style="display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;align-items:center">
+      <div class="league-tabs" id="fix-league-tabs">
+        <button class="league-tab active" data-league="U9">U9</button>
+        <button class="league-tab" data-league="U11">U11</button>
+        <button class="league-tab" data-league="U13">U13</button>
+        <button class="league-tab" data-league="U16">U16</button>
+      </div>
+      <select class="form-control" id="fix-round-filter" style="width:auto">
+        <option value="">All Rounds</option>
+        <option value="1">Round 1</option><option value="2">Round 2</option><option value="3">Round 3</option>
+        <option value="4">Round 4</option><option value="5">Round 5</option>
+      </select>
+    </div>
+    <div id="fixtures-container"></div>
+  </div></section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script><script src="js/app.js"></script>
+<script>
+function loadFixtures(league) {
+  const AAFI = window.AAFI;
+  const matches = AAFI.generateDemoMatches(league, 12).filter(m => m.status === 'scheduled');
+  const byRound = {};
+  matches.forEach(m => { if (!byRound[m.week]) byRound[m.week] = []; byRound[m.week].push(m); });
+  const container = document.getElementById('fixtures-container');
+  container.innerHTML = Object.entries(byRound).map(([week, ms]) => `
+    <div style="margin-bottom:2rem">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.2rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-secondary);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)">Round ${week}</div>
+      <div class="grid-3">${ms.map(m => AAFI.renderMatchCard(m)).join('')}</div>
+    </div>`).join('');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  loadFixtures('U9');
+  document.querySelectorAll('#fix-league-tabs .league-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('#fix-league-tabs .league-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      loadFixtures(this.dataset.league);
+    });
+  });
+});
+</script>
+</body></html>

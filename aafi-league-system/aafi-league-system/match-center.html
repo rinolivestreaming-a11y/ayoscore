@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Match Center – AAFI League</title><link rel="stylesheet" href="css/main.css"></head>
+<body>
+<nav class="navbar"><div class="navbar-inner">
+  <a href="index.html" class="navbar-brand"><div class="brand-logo">AAFI</div><div class="brand-text"><span class="brand-name">AAFI League</span><span class="brand-sub">Football System</span></div></a>
+  <ul class="navbar-nav">
+    <li><a href="index.html" class="nav-link">Home</a></li><li><a href="standings.html" class="nav-link">Standings</a></li>
+    <li><a href="fixtures.html" class="nav-link">Fixtures</a></li><li><a href="results.html" class="nav-link">Results</a></li>
+    <li><a href="match-center.html" class="nav-link active">Match Center</a></li><li><a href="teams.html" class="nav-link">Teams</a></li>
+    <li><a href="players.html" class="nav-link">Players</a></li><li><a href="statistics.html" class="nav-link">Stats</a></li>
+    <li><a href="tournament.html" class="nav-link">Tournament</a></li><li><a href="playoff.html" class="nav-link">Playoff</a></li>
+    <li><a href="news.html" class="nav-link">News</a></li><li><a href="scoreboard.html" class="nav-link">Scoreboard</a></li>
+  </ul>
+  <div class="navbar-actions"><div class="live-badge"><span class="live-dot"></span>LIVE</div><a href="admin.html" class="btn-admin">Admin ⚡</a></div>
+</div></nav>
+<div class="toast-container"></div>
+<div class="page-content" id="match-center-page">
+
+  <!-- LIVE SCOREBOARD HEADER -->
+  <div style="background:linear-gradient(135deg,#050810 0%,#0d2040 100%);padding:3rem 0;border-bottom:1px solid rgba(0,212,255,0.15)">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:0.5rem">
+        <span class="match-status status-live"><span class="live-dot"></span>LIVE MATCH</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:2rem;align-items:center;max-width:700px;margin:2rem auto">
+        <div style="text-align:center">
+          <div style="font-size:3.5rem;margin-bottom:0.75rem" class="mc-home-logo">🔵</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;text-transform:uppercase" class="mc-home-name">Thunder FC</div>
+          <div style="font-size:0.75rem;color:var(--text-muted)">Home</div>
+        </div>
+        <div style="text-align:center">
+          <div style="display:flex;align-items:center;gap:0.75rem;justify-content:center">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:5rem;font-weight:900;color:#fff;text-shadow:0 0 40px rgba(0,212,255,0.4)" class="live-home-score">2</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:3rem;color:var(--text-muted)">—</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:5rem;font-weight:900;color:#fff;text-shadow:0 0 40px rgba(0,212,255,0.4)" class="live-away-score">1</div>
+          </div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:700;color:var(--primary)" class="match-minute-display">67'</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem" class="mc-match-date">U13 League · Week 9</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:3.5rem;margin-bottom:0.75rem" class="mc-away-logo">🔴</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;text-transform:uppercase" class="mc-away-name">Eagles SC</div>
+          <div style="font-size:0.75rem;color:var(--text-muted)">Away</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:1rem">
+        <a href="scoreboard.html" class="btn btn-outline btn-sm" style="margin-right:0.5rem">📺 Stadium View</a>
+        <a href="admin.html#live" class="btn btn-danger btn-sm">⚡ Admin Control</a>
+      </div>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:2rem">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+        <!-- LEFT: Events + Lineups -->
+        <div>
+          <div class="card" style="margin-bottom:1.5rem">
+            <div class="card-header"><span class="card-title">⚡ Match Events</span></div>
+            <div style="padding:1rem" id="event-timeline">
+              <div style="text-align:center;color:var(--text-muted);padding:2rem;font-size:0.85rem">Events will appear here...</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📋 Lineups</span>
+              <div style="display:flex;gap:0.5rem">
+                <button class="btn btn-ghost btn-sm" onclick="showLineup('home')">Home</button>
+                <button class="btn btn-ghost btn-sm" onclick="showLineup('away')">Away</button>
+              </div>
+            </div>
+            <div style="padding:1rem" id="lineup-container">
+              <div id="lineup-home">
+                ${['GK','CB','CB','LB','RB','CM','CM','CAM','LW','RW','ST'].map((pos,i) => `
+                <div style="display:flex;align-items:center;gap:0.75rem;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.03)">
+                  <span style="font-size:0.65rem;background:var(--gradient-primary);padding:0.2rem 0.4rem;border-radius:3px;font-weight:700;min-width:32px;text-align:center">${pos}</span>
+                  <span style="font-weight:600;font-size:0.9rem">${['K. Martinez','J. Wilson','T. Adams','R. Johnson','A. Brown','L. Davis','M. Thomas','C. Wilson','S. Lee','D. Kim','P. Garcia'][i]}</span>
+                  <span style="margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-weight:800;color:var(--text-muted)">${i+1}</span>
+                </div>`).join('')}
+              </div>
+              <div id="lineup-away" style="display:none">
+                ${['GK','CB','CB','LB','RB','CM','CM','CAM','LW','RW','ST'].map((pos,i) => `
+                <div style="display:flex;align-items:center;gap:0.75rem;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.03)">
+                  <span style="font-size:0.65rem;background:rgba(255,107,0,0.3);padding:0.2rem 0.4rem;border-radius:3px;font-weight:700;min-width:32px;text-align:center">${pos}</span>
+                  <span style="font-weight:600;font-size:0.9rem">${['E. Santos','F. Rossi','G. Muller','H. Nguyen','I. Patel','J. Chen','K. Williams','L. Martinez','M. Brown','N. Johnson','O. Smith'][i]}</span>
+                  <span style="margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-weight:800;color:var(--text-muted)">${i+1}</span>
+                </div>`).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- RIGHT: Stats + Prediction -->
+        <div>
+          <div class="card" style="margin-bottom:1.5rem">
+            <div class="card-header"><span class="card-title">📊 Match Statistics</span></div>
+            <div style="padding:1.25rem" id="match-stats-section"></div>
+          </div>
+          <div id="prediction-widget"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script><script src="js/app.js"></script>
+<script src="js/live.js"></script><script src="js/prediction.js"></script>
+<script>
+function showLineup(side) {
+  document.getElementById('lineup-home').style.display = side === 'home' ? 'block' : 'none';
+  document.getElementById('lineup-away').style.display = side === 'away' ? 'block' : 'none';
+}
+</script>
+</body></html>

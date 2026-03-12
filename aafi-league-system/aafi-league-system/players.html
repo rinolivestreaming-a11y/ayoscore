@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Players – AAFI League</title><link rel="stylesheet" href="css/main.css"></head>
+<body>
+<nav class="navbar"><div class="navbar-inner">
+  <a href="index.html" class="navbar-brand"><div class="brand-logo">AAFI</div><div class="brand-text"><span class="brand-name">AAFI League</span><span class="brand-sub">Football System</span></div></a>
+  <ul class="navbar-nav">
+    <li><a href="index.html" class="nav-link">Home</a></li><li><a href="standings.html" class="nav-link">Standings</a></li>
+    <li><a href="fixtures.html" class="nav-link">Fixtures</a></li><li><a href="results.html" class="nav-link">Results</a></li>
+    <li><a href="match-center.html" class="nav-link">Match Center</a></li><li><a href="teams.html" class="nav-link">Teams</a></li>
+    <li><a href="players.html" class="nav-link active">Players</a></li><li><a href="statistics.html" class="nav-link">Stats</a></li>
+    <li><a href="tournament.html" class="nav-link">Tournament</a></li><li><a href="playoff.html" class="nav-link">Playoff</a></li>
+    <li><a href="news.html" class="nav-link">News</a></li><li><a href="scoreboard.html" class="nav-link">Scoreboard</a></li>
+  </ul>
+  <div class="navbar-actions"><a href="admin.html" class="btn-admin">Admin ⚡</a></div>
+</div></nav>
+<div class="toast-container"></div>
+<div class="page-content">
+  <div style="background:linear-gradient(135deg,#080c14,#0d2040);padding:3rem 0;border-bottom:1px solid var(--border)">
+    <div class="container"><div class="hero-eyebrow">👥 Squad Profiles</div><h1 class="section-title" style="-webkit-text-fill-color:white">Players</h1></div>
+  </div>
+  <section class="section"><div class="container">
+    <div style="display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;align-items:center">
+      <div class="league-tabs" id="players-league-tabs">
+        <button class="league-tab active" data-league="U9">U9</button>
+        <button class="league-tab" data-league="U11">U11</button>
+        <button class="league-tab" data-league="U13">U13</button>
+        <button class="league-tab" data-league="U16">U16</button>
+      </div>
+      <select class="form-control" id="pos-filter" style="width:auto">
+        <option value="">All Positions</option>
+        <option>GK</option><option>CB</option><option>LB</option><option>RB</option>
+        <option>CM</option><option>CAM</option><option>ST</option><option>LW</option><option>RW</option>
+      </select>
+      <input class="form-control" id="player-search" placeholder="Search player..." style="width:auto;max-width:220px">
+    </div>
+    <div class="grid-4" id="players-grid"></div>
+  </div></section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script><script src="js/app.js"></script>
+<script>
+const POS = ['GK','CB','LB','RB','CM','CAM','LW','RW','ST'];
+const PLAYER_NAMES = ['James Wilson','Carlos Martinez','Ahmed Hassan','Luke Thomas','David Kim','Ryan Johnson','Marco Silva','Alex Brown','Tyler Davis','Jordan Lee','Chris Evans','Sam Walker','Jake Taylor','Ben Harris','Tom Anderson','Leo White','Noah Martin','Ethan Clark','Mason Lewis','Oliver Scott'];
+const BG_COLORS = ['linear-gradient(135deg,#00d4ff,#0066ff)','linear-gradient(135deg,#ff6b00,#ff1744)','linear-gradient(135deg,#ffd600,#ff6b00)','linear-gradient(135deg,#00e676,#00b0ff)','linear-gradient(135deg,#a855f7,#3b82f6)'];
+
+function loadPlayers(league) {
+  const AAFI = window.AAFI;
+  const teams = AAFI.DEMO_TEAMS[league] || [];
+  const players = Array.from({length:20}, (_,i) => ({
+    name: PLAYER_NAMES[i % PLAYER_NAMES.length],
+    position: POS[i % POS.length],
+    team: teams[i % teams.length] || 'Unknown',
+    number: (i % 23) + 1,
+    goals: Math.floor(Math.random()*12),
+    assists: Math.floor(Math.random()*8),
+    matches: Math.floor(Math.random()*12)+5,
+    bgColor: BG_COLORS[i % BG_COLORS.length]
+  }));
+  document.getElementById('players-grid').innerHTML = players.map(p => `
+    <div class="player-card">
+      <div class="player-card-banner" style="background:${p.bgColor}">
+        <div class="player-number">${p.number}</div>
+        <div class="player-avatar">👤</div>
+      </div>
+      <div class="player-card-body">
+        <div class="player-name">${p.name}</div>
+        <div class="player-position">${p.position} · ${p.team}</div>
+        <div class="player-stats-row">
+          <div class="player-stat-item"><span class="player-stat-val">${p.goals}</span><span class="player-stat-lbl">Goals</span></div>
+          <div class="player-stat-item"><span class="player-stat-val">${p.assists}</span><span class="player-stat-lbl">Assists</span></div>
+          <div class="player-stat-item"><span class="player-stat-val">${p.matches}</span><span class="player-stat-lbl">Apps</span></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  loadPlayers('U9');
+  document.querySelectorAll('#players-league-tabs .league-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('#players-league-tabs .league-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      loadPlayers(this.dataset.league);
+    });
+  });
+  document.getElementById('player-search').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('.player-card').forEach(card => {
+      card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  });
+});
+</script>
+</body></html>

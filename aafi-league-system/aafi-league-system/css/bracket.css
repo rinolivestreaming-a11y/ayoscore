@@ -1,0 +1,194 @@
+/* AAFI Tournament Bracket CSS */
+.bracket-container {
+  overflow-x: auto;
+  padding: 2rem 1rem;
+}
+
+.bracket {
+  display: flex;
+  gap: 0;
+  min-width: max-content;
+  align-items: stretch;
+}
+
+.bracket-round {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  min-width: 200px;
+}
+
+.bracket-round-header {
+  text-align: center;
+  padding: 0.75rem 1rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  position: sticky;
+  top: 0;
+}
+
+.bracket-matches {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  flex: 1;
+  padding: 1rem 0;
+  gap: 1rem;
+}
+
+.bracket-connector {
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  position: relative;
+}
+
+.bracket-match {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: border-color 0.2s;
+  min-width: 180px;
+  margin: 0 1rem;
+}
+
+.bracket-match:hover { border-color: var(--border-bright); }
+
+.bracket-match.live {
+  border-color: rgba(255,23,68,0.4);
+  box-shadow: 0 0 20px rgba(255,23,68,0.1);
+}
+
+.bracket-match.completed {
+  border-color: rgba(255,255,255,0.1);
+}
+
+.bracket-team {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+
+.bracket-team:last-child { border-bottom: none; }
+
+.bracket-team.winner {
+  background: rgba(0,212,255,0.05);
+}
+
+.bracket-team.loser {
+  opacity: 0.5;
+}
+
+.bracket-team-logo {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.bracket-team-name {
+  flex: 1;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bracket-team-score {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  min-width: 20px;
+  text-align: center;
+}
+
+.bracket-team.winner .bracket-team-score { color: var(--primary); }
+
+.bracket-tbd {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+/* Final match styling */
+.bracket-round.final .bracket-match {
+  border-color: rgba(255,215,0,0.3);
+  box-shadow: 0 0 30px rgba(255,215,0,0.08);
+}
+
+.bracket-round.final .bracket-match:hover {
+  border-color: rgba(255,215,0,0.5);
+}
+
+/* Trophy */
+.champion-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  margin: 1rem;
+  text-align: center;
+}
+
+.trophy-icon { font-size: 3rem; }
+
+.champion-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.champion-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+/* Knockout card view */
+.knockout-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.knockout-round-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  padding: 1rem 0 0.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+
+.knockout-matches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+/* SVG connector lines */
+.bracket-svg-connector {
+  position: absolute;
+  pointer-events: none;
+}

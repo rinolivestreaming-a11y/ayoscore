@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Scoreboard – AAFI League</title>
+<link rel="stylesheet" href="css/main.css"><link rel="stylesheet" href="css/scoreboard.css">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="scoreboard-page">
+<div class="scoreboard-wrap">
+  <!-- Header -->
+  <div class="scoreboard-header">
+    <div class="scoreboard-league-name">AAFI Football League</div>
+    <div class="scoreboard-logo">AAFI ⚽</div>
+    <div class="scoreboard-matchday">U13 · Matchday 9 · Season 2024–25</div>
+  </div>
+
+  <!-- Main Score -->
+  <div class="scoreboard-main">
+    <div class="scoreboard-content">
+      <div class="scoreboard-teams-row">
+        <!-- Home Team -->
+        <div class="sb-team">
+          <div class="sb-team-logo" id="sb-home-logo">🔵</div>
+          <div class="sb-team-name" id="sb-home-name">Thunder FC</div>
+          <div class="sb-team-city">Manchester</div>
+        </div>
+        <!-- Score Center -->
+        <div class="sb-score-center">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+            <div class="sb-status live"><span class="sb-status-dot"></span>LIVE</div>
+            <div class="sb-score">
+              <div class="sb-score-num" id="sb-home-score">2</div>
+              <div class="sb-score-divider">–</div>
+              <div class="sb-score-num" id="sb-away-score">1</div>
+            </div>
+            <div class="sb-timer" id="sb-timer">67'</div>
+            <div class="sb-period">Second Half</div>
+          </div>
+        </div>
+        <!-- Away Team -->
+        <div class="sb-team">
+          <div class="sb-team-logo" id="sb-away-logo">🔴</div>
+          <div class="sb-team-name" id="sb-away-name">Eagles SC</div>
+          <div class="sb-team-city">London</div>
+        </div>
+      </div>
+      <!-- Stats Bar -->
+      <div class="scoreboard-stats-bar">
+        <div class="sb-stat-col">
+          <div class="sb-stat-label">Possession</div>
+          <div class="sb-stat-values">
+            <div class="sb-stat-val" id="sb-poss-home">58%</div>
+            <div class="sb-stat-bar-wrap">
+              <div class="sb-stat-bar-row"><div class="sb-stat-bar-home" style="width:58%"></div><div class="sb-stat-bar-away" style="width:42%"></div></div>
+            </div>
+            <div class="sb-stat-val" id="sb-poss-away">42%</div>
+          </div>
+        </div>
+        <div class="sb-stat-col">
+          <div class="sb-stat-label">Shots</div>
+          <div class="sb-stat-values">
+            <div class="sb-stat-val" id="sb-shots-home">12</div>
+            <div class="sb-stat-bar-wrap">
+              <div class="sb-stat-bar-row"><div class="sb-stat-bar-home" style="width:60%"></div><div class="sb-stat-bar-away" style="width:40%"></div></div>
+            </div>
+            <div class="sb-stat-val" id="sb-shots-away">8</div>
+          </div>
+        </div>
+        <div class="sb-stat-col">
+          <div class="sb-stat-label">Corners</div>
+          <div class="sb-stat-values">
+            <div class="sb-stat-val">5</div>
+            <div class="sb-stat-bar-wrap">
+              <div class="sb-stat-bar-row"><div class="sb-stat-bar-home" style="width:63%"></div><div class="sb-stat-bar-away" style="width:37%"></div></div>
+            </div>
+            <div class="sb-stat-val">3</div>
+          </div>
+        </div>
+        <div class="sb-stat-col">
+          <div class="sb-stat-label">Fouls</div>
+          <div class="sb-stat-values">
+            <div class="sb-stat-val">8</div>
+            <div class="sb-stat-bar-wrap">
+              <div class="sb-stat-bar-row"><div class="sb-stat-bar-home" style="width:42%"></div><div class="sb-stat-bar-away" style="width:58%"></div></div>
+            </div>
+            <div class="sb-stat-val">11</div>
+          </div>
+        </div>
+        <div class="sb-stat-col">
+          <div class="sb-stat-label">Yellow Cards</div>
+          <div class="sb-stat-values">
+            <div class="sb-stat-val">0</div>
+            <div class="sb-stat-bar-wrap">
+              <div class="sb-stat-bar-row"><div class="sb-stat-bar-home" style="width:0%"></div><div class="sb-stat-bar-away" style="width:100%"></div></div>
+            </div>
+            <div class="sb-stat-val">1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Ticker -->
+  <div class="scoreboard-ticker">
+    <div class="ticker-inner" id="sb-ticker">
+      <span class="ticker-event"><span class="ticker-event-icon">⚽</span>GOAL! James Wilson (Thunder FC) 23'</span>
+      <span class="ticker-event"><span class="ticker-event-icon">🟨</span>Yellow Card: John Smith (Eagles SC) 34'</span>
+      <span class="ticker-event"><span class="ticker-event-icon">⚽</span>GOAL! Ryan Johnson (Eagles SC) 45+2'</span>
+      <span class="ticker-event"><span class="ticker-event-icon">⚽</span>GOAL! Carlos Martinez (Thunder FC) 58'</span>
+      <span class="ticker-event"><span class="ticker-event-icon">🔄</span>Substitution: Thunder FC - Alex Brown → Tom White 65'</span>
+      <span class="ticker-event"><span class="ticker-event-icon">⚽</span>GOAL! James Wilson (Thunder FC) 23'</span>
+      <span class="ticker-event"><span class="ticker-event-icon">🟨</span>Yellow Card: John Smith (Eagles SC) 34'</span>
+      <span class="ticker-event"><span class="ticker-event-icon">⚽</span>GOAL! Ryan Johnson (Eagles SC) 45+2'</span>
+      <span class="ticker-event"><span class="ticker-event-icon">⚽</span>GOAL! Carlos Martinez (Thunder FC) 58'</span>
+      <span class="ticker-event"><span class="ticker-event-icon">🔄</span>Substitution: Thunder FC - Alex Brown → Tom White 65'</span>
+    </div>
+  </div>
+
+  <!-- Controls (hidden in fullscreen) -->
+  <div id="sb-controls" style="position:fixed;bottom:1rem;right:1rem;display:flex;gap:0.5rem;z-index:200">
+    <a href="match-center.html" style="background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);padding:0.5rem 1rem;border-radius:6px;text-decoration:none;font-size:0.75rem;font-family:'Barlow Condensed',sans-serif">← Match Center</a>
+    <button onclick="document.documentElement.requestFullscreen()" style="background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);color:#00d4ff;padding:0.5rem 1rem;border-radius:6px;cursor:pointer;font-size:0.75rem;font-family:'Barlow Condensed',sans-serif">⛶ Fullscreen</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script><script src="js/app.js"></script>
+<script>
+let minute = 67;
+setInterval(() => {
+  minute++;
+  const el = document.getElementById('sb-timer');
+  if (el) el.textContent = minute <= 90 ? minute + "'" : '90+' + (minute-90) + "'";
+}, 60000);
+
+// Simulate live updates from Supabase
+if (window.AAFI?.realtime) {
+  window.AAFI.realtime.subscribe('sb-matches', 'matches', payload => {
+    if (payload.new) {
+      document.getElementById('sb-home-score').textContent = payload.new.home_score;
+      document.getElementById('sb-away-score').textContent = payload.new.away_score;
+      document.getElementById('sb-timer').textContent = payload.new.minute + "'";
+      if (payload.new.home_score > (parseInt(document.getElementById('sb-home-score').textContent)||0) ||
+          payload.new.away_score > (parseInt(document.getElementById('sb-away-score').textContent)||0)) {
+        const flash = document.createElement('div');
+        flash.className = 'goal-flash';
+        const txt = document.createElement('div');
+        txt.className = 'goal-text';
+        txt.textContent = 'GOAL!';
+        document.body.appendChild(flash);
+        document.body.appendChild(txt);
+        setTimeout(() => { flash.remove(); txt.remove(); }, 2500);
+      }
+    }
+  });
+}
+</script>
+</body></html>

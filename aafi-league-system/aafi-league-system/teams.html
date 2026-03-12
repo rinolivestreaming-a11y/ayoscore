@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Teams – AAFI League</title><link rel="stylesheet" href="css/main.css"></head>
+<body>
+<nav class="navbar"><div class="navbar-inner">
+  <a href="index.html" class="navbar-brand"><div class="brand-logo">AAFI</div><div class="brand-text"><span class="brand-name">AAFI League</span><span class="brand-sub">Football System</span></div></a>
+  <ul class="navbar-nav">
+    <li><a href="index.html" class="nav-link">Home</a></li><li><a href="standings.html" class="nav-link">Standings</a></li>
+    <li><a href="fixtures.html" class="nav-link">Fixtures</a></li><li><a href="results.html" class="nav-link">Results</a></li>
+    <li><a href="match-center.html" class="nav-link">Match Center</a></li><li><a href="teams.html" class="nav-link active">Teams</a></li>
+    <li><a href="players.html" class="nav-link">Players</a></li><li><a href="statistics.html" class="nav-link">Stats</a></li>
+    <li><a href="tournament.html" class="nav-link">Tournament</a></li><li><a href="playoff.html" class="nav-link">Playoff</a></li>
+    <li><a href="news.html" class="nav-link">News</a></li><li><a href="scoreboard.html" class="nav-link">Scoreboard</a></li>
+  </ul>
+  <div class="navbar-actions"><a href="admin.html" class="btn-admin">Admin ⚡</a></div>
+</div></nav>
+<div class="toast-container"></div>
+<div class="page-content">
+  <div style="background:linear-gradient(135deg,#080c14,#0d2040);padding:3rem 0;border-bottom:1px solid var(--border)">
+    <div class="container"><div class="hero-eyebrow">🏟️ Club Profiles</div><h1 class="section-title" style="-webkit-text-fill-color:white">Teams</h1></div>
+  </div>
+  <section class="section"><div class="container">
+    <div style="margin-bottom:2rem">
+      <div class="league-tabs" id="teams-league-tabs">
+        <button class="league-tab active" data-league="U9">U9</button>
+        <button class="league-tab" data-league="U11">U11</button>
+        <button class="league-tab" data-league="U13">U13</button>
+        <button class="league-tab" data-league="U16">U16</button>
+      </div>
+    </div>
+    <div class="grid-4" id="teams-grid"></div>
+  </div></section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase.js"></script><script src="js/app.js"></script>
+<script>
+const COLORS = ['#00d4ff','#ff1744','#ffd600','#00e676','#ff6b00','#a855f7','#334155','#e2e8f0','#f97316','#3b82f6'];
+function loadTeams(league) {
+  const AAFI = window.AAFI;
+  const teams = (AAFI.DEMO_TEAMS[league] || []).map((name, i) => ({
+    name, emoji: AAFI.TEAM_EMOJIS[i], color: COLORS[i % COLORS.length],
+    played: Math.floor(Math.random()*10)+8, won: Math.floor(Math.random()*8)+2,
+    goals: Math.floor(Math.random()*25)+10, players: Math.floor(Math.random()*5)+10
+  }));
+  document.getElementById('teams-grid').innerHTML = teams.map(t => `
+    <div class="card" style="cursor:pointer;overflow:visible" onclick="location.href='players.html'">
+      <div style="height:90px;background:linear-gradient(135deg,${t.color}33,${t.color}11);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative">
+        <div style="font-size:3rem">${t.emoji}</div>
+        <div style="position:absolute;top:0.75rem;right:0.75rem;font-size:0.65rem;color:${t.color};font-weight:700;text-transform:uppercase;letter-spacing:0.1em">${league}</div>
+      </div>
+      <div style="padding:1.25rem">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:0.25rem">${t.name}</div>
+        <div style="display:flex;gap:0.25rem;margin-bottom:1rem">
+          <div style="width:6px;height:6px;border-radius:50%;background:${t.color};margin-top:6px"></div>
+          <span style="font-size:0.75rem;color:var(--text-muted)">${league} League</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;padding-top:1rem;border-top:1px solid var(--border)">
+          <div style="text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;color:var(--primary)">${t.played}</div><div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase">Played</div></div>
+          <div style="text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;color:var(--green)">${t.won}</div><div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase">Won</div></div>
+          <div style="text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;color:var(--accent)">${t.goals}</div><div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase">Goals</div></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  loadTeams('U9');
+  document.querySelectorAll('#teams-league-tabs .league-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('#teams-league-tabs .league-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      loadTeams(this.dataset.league);
+    });
+  });
+});
+</script>
+</body></html>
